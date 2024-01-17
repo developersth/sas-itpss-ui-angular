@@ -1,6 +1,7 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:5000/api',
+  apiUrl: 'https://www.melivecode.com/api',
   keyLocalAuthenInfo: 'keyLocalAuthenInfo',
-  fullNameLocalAuthen: 'fullNameLocalAuthen'
+  fullNameLocalAuthen: 'fullNameLocalAuthen',
+  avatarLocalAuthen: 'avatarLocalAuthen'
 };
