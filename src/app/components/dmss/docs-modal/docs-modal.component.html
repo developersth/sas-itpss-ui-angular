@@ -1,0 +1,91 @@
+<section id="docs-modal">
+  <div class="row">
+    <div class="col-12">
+      <div class="content-header">จัดการเอกสาร #</div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-8">
+              <h4 class="card-title">PO Information</h4>
+            </div>
+            <div class="row col-4">
+              <div class="col">
+                <label for="basicInput">เลขที่เอกสาร :</label>
+                <input type="text" readonly="true" class="form-control" id="basicInput"
+                  placeholder="DOC-20240117-00001">
+              </div>
+              <div class="col">
+                <label for="basicInput">วันที่ :</label>
+                <div class="form-inline">
+                  <div class="input-group" style="width: 100%;">
+                    <input class="form-control" readonly (click)="dtDocDate.toggle()" placeholder="dd-mm-yyyy" name="dp"
+                      [(ngModel)]="dtDocDate" ngbDatepicker [dayTemplate]="customDay" [markDisabled]="isDisabled"
+                      #dtDocDate="ngbDatepicker">
+                    <div class="input-group-append">
+                      <div class="input-group-text" (click)="dtDocDate.toggle()">
+                        <i class="ft ft-calendar" style="cursor: pointer;"></i>
+                      </div>
+                    </div>
+                    <ng-template #customDay let-date="date" let-currentMonth="currentMonth" let-selected="selected"
+                      let-disabled="disabled">
+                      <span class="custom-day" [class.weekend]="isWeekend(date)" [class.bg-primary]="selected"
+                        [class.hidden]="date.month !== currentMonth" [class.text-muted]="disabled">
+                        {{ date.day }}
+                      </span>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6 justify-content-end">
+                <fieldset class="form-group">
+                  <label for="basicInput">Basic</label>
+                  <input type="text" class="form-control" id="basicInput" placeholder="Enter email">
+                </fieldset>
+
+                <fieldset class="form-group">
+                  <label for="helpInputTop">Input text with help</label>
+                  <small class="text-muted">eg.<i>someone@example.com</i></small>
+                  <input type="text" class="form-control" id="helpInputTop">
+                </fieldset>
+
+                <fieldset class="form-group">
+                  <label for="helperText">With Helper Text</label>
+                  <input type="text" id="helperText" class="form-control" placeholder="Name">
+                  <small class="text-muted">Find helper text here for given textbox.</small>
+                </fieldset>
+              </div>
+              <div class="col-md-6 justify-content-end">
+                <fieldset class="form-group">
+                  <label for="disabledInput">Disabled Input</label>
+                  <input type="text" class="form-control" id="disabledInput" placeholder="Disabled Text" disabled>
+                </fieldset>
+                <fieldset class="form-group">
+                  <label for="readonlyInput">Readonly Input</label>
+                  <input type="text" class="form-control" id="readonlyInput" readonly="readonly"
+                    value="You can't update me :P">
+                </fieldset>
+
+                <fieldset class="form-group">
+                  <label>Static Text</label>
+                  <p class="form-control-static" id="staticInput">email@pixinvent.com</p>
+                </fieldset>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
