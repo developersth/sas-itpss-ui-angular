@@ -9,14 +9,17 @@ import { th } from 'date-fns/locale';
 export class DocsListComponent implements OnInit {
 
   constructor() { }
+
   pageSize: number = 10;
   pageSizes: any = [10, 20, 50, 100];
-  data: any;
+  data:any = [];
   ngOnInit(): void {
-    this.getData();
+   this.getData();
+
   }
+
   getData() {
-    this.data = [
+    return this.data =[
       {
         docno: 'DOC-20240101-0001',
         pono: 'SPO1214-001',
@@ -87,7 +90,7 @@ export class DocsListComponent implements OnInit {
         status: 'Sending PO',
         totalPrice: '999 USD',
       }
-    ]
+    ];
   }
 
 }
