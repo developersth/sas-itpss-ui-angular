@@ -7,26 +7,25 @@
   <div class="row">
     <div class="col-12">
       <div class="card">
-        <div class="card-header">
+        <div class="card-header  layout-dark">
           <div class="row">
-            <div class="col-8">
-              <h4 class="card-title">PO Information</h4>
+            <div class="col-7">
+              <h4 class="card-title" >PO Information</h4>
             </div>
-            <div class="row col-4">
+            <div class="row col-5">
               <div class="col">
-                <label for="basicInput">เลขที่เอกสาร :</label>
-                <input type="text" readonly="true" class="form-control" id="basicInput"
-                  placeholder="DOC-20240117-00001">
+                <label for="basicInput" >เลขที่เอกสาร :</label>
+                <input type="text" class="form-control" readonly="readonly" id="basicInput" value="DOC-20240117-00001">
               </div>
               <div class="col">
-                <label for="basicInput">วันที่ :</label>
+                <label for="basicInput" >วันที่ :</label>
                 <div class="form-inline">
                   <div class="input-group" style="width: 100%;">
-                    <input class="form-control" readonly (click)="dtDocDate.toggle()" placeholder="dd-mm-yyyy" name="dp"
-                      [(ngModel)]="dtDocDate" ngbDatepicker [dayTemplate]="customDay" [markDisabled]="isDisabled"
-                      #dtDocDate="ngbDatepicker">
+                    <input class="form-control" readonly (click)="dpStart.toggle()" placeholder="dd/mm/yyyy" name="dp"
+                      [(ngModel)]="dtStart" ngbDatepicker [dayTemplate]="customDay" [markDisabled]="isDisabled"
+                      #dpStart="ngbDatepicker">
                     <div class="input-group-append">
-                      <div class="input-group-text" (click)="dtDocDate.toggle()">
+                      <div class="input-group-text" (click)="dpStart.toggle()">
                         <i class="ft ft-calendar" style="cursor: pointer;"></i>
                       </div>
                     </div>
@@ -47,41 +46,213 @@
         </div>
         <div class="card-content">
           <div class="card-body">
+            <form [formGroup]="docForm" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <div class="col-md-3">
+                  <fieldset class="form-group">
+                    <label for="type">Status :</label>
+                    <div class="input-group">
+                      <select class="form-control" formControlName="statusId" id="inputGroupSelect">
+                        <option value=0>---ไม่ระบุ---</option>
+                        <option *ngFor="let item of status" [value]="item.statusId">{{item.statusName}}
+                        </option>
+                      </select>
+                    </div>
+                  </fieldset>
+                </div>
+                <div class="col-md-3">
+                  <fieldset class="form-group">
+                    <label for="type">วันที่ของถึง:</label>
+                    <div class="form-inline">
+                      <div class="input-group" style="width: 100%;">
+                        <input class="form-control" readonly (click)="dpEnd.toggle()" placeholder="dd/mm/yyyy" name="dp"
+                          [(ngModel)]="dtEnd" ngbDatepicker [dayTemplate]="customDay" [markDisabled]="isDisabled"
+                          #dpEnd="ngbDatepicker">
+                        <div class="input-group-append">
+                          <div class="input-group-text" (click)="dpEnd.toggle()">
+                            <i class="ft ft-calendar" style="cursor: pointer;"></i>
+                          </div>
+                        </div>
+                        <ng-template #customDay let-date="date" let-currentMonth="currentMonth" let-selected="selected"
+                          let-disabled="disabled">
+                          <span class="custom-day" [class.weekend]="isWeekend(date)" [class.bg-primary]="selected"
+                            [class.hidden]="date.month !== currentMonth" [class.text-muted]="disabled">
+                            {{ date.day }}
+                          </span>
+                        </ng-template>
+                      </div>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+                <div class="row">
+                  <div class="col-md-6 col-12">
+                    <div class="form-group row">
+                      <label class="col-md-3 col-form-label" for="horizontal-form-1">ผู้ขอซื้อ</label>
+                      <div class="col-md-9">
+                        <input type="text" class="form-control square" id="horizontal-form-1" name="first-name">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-12">
+                    <div class="form-group row">
+                      <label class="col-md-3 col-form-label" for="horizontal-form-2">ชว.</label>
+                      <div class="col-md-9">
+                        <input type="text" class="form-control square" id="horizontal-form-2" name="last-name">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row mb-md-3">
+                  <div class="col-md-6 col-12">
+                    <div class="form-group row">
+                      <label class="col-md-3 col-form-label" for="horizontal-form-3">Supplier</label>
+                      <div class="col-md-9">
+                        <input type="text" class="form-control square" id="horizontal-form-3" name="username">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-12">
+                    <div class="form-group row">
+                      <label class="col-md-3 col-form-label" for="horizontal-form-4">Nick Name</label>
+                      <div class="col-md-9">
+                        <input type="text" class="form-control square" id="horizontal-form-4" name="nick-name">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-12">
+                    <div class="form-group row">
+                      <label class="col-md-3 col-form-label" for="horizontal-form-5">Email</label>
+                      <div class="col-md-9">
+                        <input type="email" class="form-control square" id="horizontal-form-5" name="e-mail">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-md-3 col-form-label" for="horizontal-form-6">Website</label>
+                      <div class="col-md-9">
+                        <input type="text" class="form-control square" id="horizontal-form-6" name="website">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-md-3 col-form-label" for="horizontal-form-7">Contact Number</label>
+                      <div class="col-md-9">
+                        <input type="number" class="form-control square" id="horizontal-form-7" name="phone-number">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-12">
+                    <div class="form-group row">
+                      <label class="col-md-3 col-form-label" for="horizontal-form-9">หมายเหตุ</label>
+                      <div class="col-md-9">
+                        <textarea id="horizontal-form-9" rows="6" class="form-control square" name="comment3"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+    
+              <div class="row justify-content-center">
+                <button type="submit" class="btn btn-lg btn-primary"><i class="ft-check-square mr-1"></i>บันทึก</button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header  layout-dark">
+          <div class="card-title" >Order Acknowleged</div>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
             <div class="row">
-              <div class="col-md-6 justify-content-end">
+              <div class="col-md-6 col-12">
+                <div class="form-group row">
+                  <label class="col-md-3 col-form-label" for="horizontal-form-1">OA / OC</label>
+                  <div class="col-md-9">
+                    <input type="file" class="form-control" onchange="console.log(event.target.files)">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-12">
+                <div class="form-group row">
+                  <label class="col-md-3 col-form-label" for="horizontal-form-2">Ship date</label>
+                  <div class="col-md-9">
+                    <input type="text" class="form-control square" id="horizontal-form-2" name="last-name">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
                 <fieldset class="form-group">
-                  <label for="basicInput">Basic</label>
-                  <input type="text" class="form-control" id="basicInput" placeholder="Enter email">
-                </fieldset>
-
-                <fieldset class="form-group">
-                  <label for="helpInputTop">Input text with help</label>
-                  <small class="text-muted">eg.<i>someone@example.com</i></small>
-                  <input type="text" class="form-control" id="helpInputTop">
-                </fieldset>
-
-                <fieldset class="form-group">
-                  <label for="helperText">With Helper Text</label>
-                  <input type="text" id="helperText" class="form-control" placeholder="Name">
-                  <small class="text-muted">Find helper text here for given textbox.</small>
+                  <label for="type">OA / OC :</label>
+                  <div class="input-group">
+                    <div class="col-md-12 col-lg-6">
+                      <label class="custom-file">
+                        <input type="file" class="form-group" onchange="console.log(event.target.files)">
+                      </label>
+                    </div>
+                  </div>
                 </fieldset>
               </div>
-              <div class="col-md-6 justify-content-end">
-                <fieldset class="form-group">
-                  <label for="disabledInput">Disabled Input</label>
-                  <input type="text" class="form-control" id="disabledInput" placeholder="Disabled Text" disabled>
-                </fieldset>
-                <fieldset class="form-group">
-                  <label for="readonlyInput">Readonly Input</label>
-                  <input type="text" class="form-control" id="readonlyInput" readonly="readonly"
-                    value="You can't update me :P">
-                </fieldset>
+            </div>
+            <div class="row justify-content-center">
+              <button type="submit" class="btn btn-lg btn-primary">บันทึก</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header  layout-dark">
+          <div class="card-title" >Ready to Shipped</div>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+            <div class="row">
 
-                <fieldset class="form-group">
-                  <label>Static Text</label>
-                  <p class="form-control-static" id="staticInput">email@pixinvent.com</p>
-                </fieldset>
-              </div>
+            </div>
+            <div class="row justify-content-center">
+              <button type="submit" class="btn btn-lg btn-primary">บันทึก</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header  layout-dark">
+          <div class="card-title" >On the Way</div>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+            <div class="row">
+
+            </div>
+            <div class="row justify-content-center">
+              <button type="submit" class="btn btn-lg btn-primary">บันทึก</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header  layout-dark">
+          <div class="card-title" >Received</div>
+        </div>
+        <div class="card-content">
+          <div class="card-body">
+            <div class="row">
+
+            </div>
+            <div class="row justify-content-center">
+              <button type="submit" class="btn btn-lg btn-primary">บันทึก</button>
             </div>
           </div>
         </div>
