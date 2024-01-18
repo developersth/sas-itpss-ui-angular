@@ -10,15 +10,15 @@
         <div class="card-header  layout-dark">
           <div class="row">
             <div class="col-7">
-              <h4 class="card-title" >PO Information</h4>
+              <h4 class="card-title">PO Information</h4>
             </div>
             <div class="row col-5">
               <div class="col">
-                <label for="basicInput" >เลขที่เอกสาร :</label>
+                <label for="basicInput">เลขที่เอกสาร :</label>
                 <input type="text" class="form-control" readonly="readonly" id="basicInput" value="DOC-20240117-00001">
               </div>
               <div class="col">
-                <label for="basicInput" >วันที่ :</label>
+                <label for="basicInput">วันที่ :</label>
                 <div class="form-inline">
                   <div class="input-group" style="width: 100%;">
                     <input class="form-control" readonly (click)="dpStart.toggle()" placeholder="dd/mm/yyyy" name="dp"
@@ -46,13 +46,13 @@
         </div>
         <div class="card-content">
           <div class="card-body">
-            <form [formGroup]="docForm" (ngSubmit)="onSubmit()">
+            <form >
               <div class="row">
                 <div class="col-md-3">
                   <fieldset class="form-group">
                     <label for="type">Status :</label>
                     <div class="input-group">
-                      <select class="form-control" formControlName="statusId" id="inputGroupSelect">
+                      <select class="form-control" [(ngModel)]="statusId" [ngModelOptions]="{standalone: true}" id="inputGroupSelect">
                         <option value=0>---ไม่ระบุ---</option>
                         <option *ngFor="let item of status" [value]="item.statusId">{{item.statusName}}
                         </option>
@@ -84,82 +84,136 @@
                     </div>
                   </fieldset>
                 </div>
+                <div class="col-md-6">
+                  <fieldset class="form-group">
+                    <label for="type">หมายเลข (SPO):</label>
+                    <input type="text" class="form-control square" id="horizontal-form-1" name="first-name">
+                  </fieldset>
+                </div>
               </div>
-                <div class="row">
-                  <div class="col-md-6 col-12">
-                    <div class="form-group row">
-                      <label class="col-md-3 col-form-label" for="horizontal-form-1">ผู้ขอซื้อ</label>
-                      <div class="col-md-9">
-                        <input type="text" class="form-control square" id="horizontal-form-1" name="first-name">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6 col-12">
-                    <div class="form-group row">
-                      <label class="col-md-3 col-form-label" for="horizontal-form-2">ชว.</label>
-                      <div class="col-md-9">
-                        <ul class="list-unstyled mb-0 mt-1">
-                          <li class="d-inline-block mr-2">
-                            <div class="radio">
-                              <input type="radio" name="basic-radio-1" id="radio1" checked>
-                              <label for="radio1">ทำ</label>
-                            </div>
-                          </li>
-                          <li class="d-inline-block mr-2">
-                            <div class="radio">
-                              <input type="radio" name="basic-radio-1" id="radio2">
-                              <label for="radio2">ไม่ทำ</label>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
+              <div class="row">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                      <tr class="bg-info" style="color: white;">
+                        <th>Item</th>
+                        <th>เลขที่ใบสั่งซื้อ (PO)</th>
+                        <th>เลขที่ใบขอซื้อ (PR)</th>
+                        <th>เลขที่ Job</th>
+                        <th>#</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of itemSPO;let idx = index">
+                        <td>
+                          <label  [(ngModel)]="item.item" >{{idx+1}}</label>
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" id="horizontal-form-1" [(ngModel)]="item.poNo" [ngModelOptions]="{standalone: true}">
+
+                            <label class="custom-file mt-1">
+                              <input type="file"  [(ngModel)]="item.poFile" ng2FileSelect>
+                              <span class="custom-file-control"></span>
+                            </label>
+
+                        </td>
+                        <td>
+                          <input type="text" class="form-control" id="horizontal-form-1" [(ngModel)]="item.prNo" [ngModelOptions]="{standalone: true}">
+                          <label class="custom-file mt-1">
+                            <input type="file"  [(ngModel)]="item.prFile" ng2FileSelect>
+                            <span class="custom-file-control"></span>
+                          </label>
+
+                        </td>
+                        <td>
+                          <input type="text" class="form-control" id="horizontal-form-1" [(ngModel)]="item.jobNo" [ngModelOptions]="{standalone: true}">
+                        </td>
+                        <td>
+                          <button class="btn btn-danger" (click)="removeItemPO(item)"><i class="fa fa-trash"></i></button>
+                        </td>
+                      </tr>
+
+                    </tbody>
+                  </table>
+                  <button class="btn btn-outline-info" (click)="addItemPO()"><i class="fa fa-plus">เพิ่มรายการ</i></button>
+                </div>
+
+              </div>
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label" for="horizontal-form-1">ผู้ขอซื้อ</label>
+                    <div class="col-md-9">
+                      <input type="text" class="form-control square" id="horizontal-form-1" name="first-name">
                     </div>
                   </div>
                 </div>
-                <div class="row mb-md-3">
-                  <div class="col-md-6 col-12">
-                    <div class="form-group row">
-                      <label class="col-md-3 col-form-label" for="horizontal-form-3">Supplier</label>
-                      <div class="col-md-9">
-                        <input type="text" class="form-control square" id="horizontal-form-3" name="username">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-md-6 col-12">
-                    <div class="form-group row">
-                      <label class="col-md-3 col-form-label" for="horizontal-form-4">Item No.(PO)</label>
-                      <div class="col-md-9">
-                        <input type="text" class="form-control square" id="horizontal-form-4" name="nick-name">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-6 col-12">
-                    <div class="form-group row">
-                      <label class="col-md-3 col-form-label" for="horizontal-form-5">Payment Term</label>
-                      <div class="col-md-9">
-                        <input type="text" class="form-control square" id="horizontal-form-5" name="e-mail">
-                      </div>
-                    </div>
-                    <div class="form-group row">
-                      <label class="col-md-3 col-form-label" for="horizontal-form-6">Delivery Term</label>
-                      <div class="col-md-9">
-                        <input type="text" class="form-control square" id="horizontal-form-6" name="website">
-                      </div>
-                    </div>
-  
-                  </div>
-                  <div class="col-md-6 col-12">
-                    <div class="form-group row">
-                      <label class="col-md-3 col-form-label" for="horizontal-form-9">หมายเหตุ</label>
-                      <div class="col-md-9">
-                        <textarea id="horizontal-form-9" rows="6" class="form-control square" name="comment3"></textarea>
-                      </div>
+                <div class="col-md-6 col-12">
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label" for="horizontal-form-2">ชว.</label>
+                    <div class="col-md-9">
+                      <ul class="list-unstyled mb-0 mt-1">
+                        <li class="d-inline-block mr-2">
+                          <div class="radio">
+                            <input type="radio" name="basic-radio-1" id="radio1" checked>
+                            <label for="radio1">ทำ</label>
+                          </div>
+                        </li>
+                        <li class="d-inline-block mr-2">
+                          <div class="radio">
+                            <input type="radio" name="basic-radio-1" id="radio2">
+                            <label for="radio2">ไม่ทำ</label>
+                          </div>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
-    
+              </div>
+              <div class="row mb-md-3">
+                <div class="col-md-6 col-12">
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label" for="horizontal-form-3">Supplier</label>
+                    <div class="col-md-9">
+                      <input type="text" class="form-control square" id="horizontal-form-3" name="username">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6 col-12">
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label" for="horizontal-form-4">Item No.(PO)</label>
+                    <div class="col-md-9">
+                      <input type="text" class="form-control square" id="horizontal-form-4" name="nick-name">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 col-12">
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label" for="horizontal-form-5">Payment Term</label>
+                    <div class="col-md-9">
+                      <input type="text" class="form-control square" id="horizontal-form-5" name="e-mail">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label" for="horizontal-form-6">Delivery Term</label>
+                    <div class="col-md-9">
+                      <input type="text" class="form-control square" id="horizontal-form-6" name="website">
+                    </div>
+                  </div>
+
+                </div>
+                <div class="col-md-6 col-12">
+                  <div class="form-group row">
+                    <label class="col-md-3 col-form-label" for="horizontal-form-9">หมายเหตุ</label>
+                    <div class="col-md-9">
+                      <textarea id="horizontal-form-9" rows="6" class="form-control square" name="comment3"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <div class="row justify-content-center">
                 <button type="submit" class="btn btn-lg btn-primary"><i class="ft-check-square mr-1"></i>บันทึก</button>
               </div>
@@ -172,7 +226,7 @@
     <div class="col-12">
       <div class="card">
         <div class="card-header  layout-dark">
-          <div class="card-title" >Order Acknowleged</div>
+          <div class="card-title">Order Acknowleged</div>
         </div>
         <div class="card-content">
           <div class="card-body">
@@ -204,7 +258,7 @@
     <div class="col-12">
       <div class="card">
         <div class="card-header  layout-dark">
-          <div class="card-title" >Ready to Shipped</div>
+          <div class="card-title">Ready to Shipped</div>
         </div>
         <div class="card-content">
           <div class="card-body">
@@ -221,7 +275,7 @@
     <div class="col-12">
       <div class="card">
         <div class="card-header  layout-dark">
-          <div class="card-title" >On the Way</div>
+          <div class="card-title">On the Way</div>
         </div>
         <div class="card-content">
           <div class="card-body">
@@ -238,7 +292,7 @@
     <div class="col-12">
       <div class="card">
         <div class="card-header  layout-dark">
-          <div class="card-title" >Received</div>
+          <div class="card-title">Received</div>
         </div>
         <div class="card-content">
           <div class="card-body">

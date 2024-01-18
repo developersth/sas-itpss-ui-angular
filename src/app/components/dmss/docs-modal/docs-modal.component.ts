@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { NgbDateStruct } from "@ng-bootstrap/ng-bootstrap";
+import { mItemSPO } from "app/models/mItemSPO.model";
 import {
   FormBuilder,
   FormGroup,
@@ -7,7 +8,7 @@ import {
   UntypedFormGroup,
   Validators,
 } from "@angular/forms";
-const URL = 'https://evening-anchorage-3159.herokuapp.com/api/';
+
 @Component({
   selector: "app-docs-modal",
   templateUrl: "./docs-modal.component.html",
@@ -17,40 +18,53 @@ const URL = 'https://evening-anchorage-3159.herokuapp.com/api/';
   ],
 })
 export class DocsModalComponent implements OnInit {
-  constructor(public formBuilder: FormBuilder,) {
+  constructor(public formBuilder: FormBuilder) {
     this.docForm = this.formBuilder.group({
-      statusId: [0]
+      statusId: [0],
     });
   }
+  statusId:string;
   dtStart: NgbDateStruct;
-  dtEnd:NgbDateStruct;
+  dtEnd: NgbDateStruct;
   now: Date = new Date();
-  status:any=[];
-  docForm:FormGroup;
+  status: any = [];
+  docForm: FormGroup;
+  itemSPO: mItemSPO[];
   ngOnInit(): void {
-
     this.selectToday();
     this.now = new Date();
     this.getStatus();
+    this.getItemSPO();
     this.buildItemForm();
   }
   private buildItemForm() {
     this.docForm = this.formBuilder.group({
-      statusId: [0]
+      statusId: [0],
     });
   }
-  onSubmit() {
+  onSubmit() {}
+  getItemSPO() {
+    return (this.itemSPO = [
+      {
+        item: 1,
+        poNo: "",
+        poFile: "",
+        prNo: "",
+        prFile: "",
+        jobNo: "",
+      }
+    ]);
   }
-  getStatus(){
-    return this.status=[
-      {statusId:1,statusName:'Sending PO'},
-      {statusId:2,statusName:'Order Acknowleged'},
-      {statusId:3,statusName:'Ready to Shipped'},
-      {statusId:4,statusName:'On the Way'},
-      {statusId:5,statusName:'Clearance'},
-      {statusId:6,statusName:'Received'},
-      {statusId:7,statusName:'Completed'},
-    ]
+  getStatus() {
+    return (this.status = [
+      { statusId: 1, statusName: "Sending PO" },
+      { statusId: 2, statusName: "Order Acknowleged" },
+      { statusId: 3, statusName: "Ready to Shipped" },
+      { statusId: 4, statusName: "On the Way" },
+      { statusId: 5, statusName: "Clearance" },
+      { statusId: 6, statusName: "Received" },
+      { statusId: 7, statusName: "Completed" },
+    ]);
   }
   isDisabled(date: NgbDateStruct, current: { month: number }) {
     return date.month !== current.month;
@@ -69,5 +83,18 @@ export class DocsModalComponent implements OnInit {
     const d = new Date(date.year, date.month - 1, date.day);
     return d.getDay() === 0 || d.getDay() === 6;
   }
-
+  removeItemPO(item: any) {
+    let index = this.itemSPO.indexOf(item);
+    this.itemSPO.splice(index, 1);
+  }
+  addItemPO(){
+    this.itemSPO.push({
+      item: null,
+      poNo: '',
+      poFile: '',
+      prNo: '',
+      prFile: '',
+      jobNo: '',
+    });
+  }
 }
