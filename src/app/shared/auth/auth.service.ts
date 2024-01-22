@@ -55,7 +55,7 @@ export class AuthService {
       tap((response: any) => {
         localStorage.setItem(this.keyLocalAuthenInfo, response.token);
         localStorage.setItem(this.fullNameLocalAuthen, response.user.username);
-        //localStorage.setItem(this.avatarLocalAuthen, response.image);
+        localStorage.setItem(this.avatarLocalAuthen, response.image);
       }),
       tap(() => this.isAuthenticatedSubject.next(true))
     );

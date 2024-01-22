@@ -7,12 +7,9 @@ import { environment } from "environments/environment";
 import { forEach } from "core-js/core/array";
 
 //----------------------------------------------------------------
-import { UserData } from "app/models/user.model";
+import { UserModel } from "app/models/user.model";
 import { Roles } from "app/models/roles.model";
-import { Truck } from "../../models/truck.model";
-import { Response } from "../../models/response.model";
-import { SealTypes } from "app/models/seal-types.model";
-import { SealStatus } from "app/models/seal-status.model";
+
 
 @Injectable()
 export class RestService {
@@ -40,22 +37,22 @@ export class RestService {
   }
   //----------------------------------------------------------------
   getRoles(): Observable<Roles[]> {
-    return this.http.get<Roles[]>(`${this.rolesUrl}/GetRoles`);
+    return this.http.get<Roles[]>(`${this.rolesUrl}/GetRole`);
   }
   //----------------------------------------------------------------
-  getUsers(): Observable<UserData[]> {
-    return this.http.get<UserData[]>(`${this.userUrl}`);
+  getUsers(): Observable<UserModel[]> {
+    return this.http.get<UserModel[]>(`${this.userUrl}/GetUser`);
   }
-  getUser(id: number): Observable<UserData> {
-    return this.http.get<UserData>(`${this.userUrl}/${id}`);
+  getUser(id: number): Observable<UserModel> {
+    return this.http.get<UserModel>(`${this.userUrl}/${id}`);
   }
-  createUser(body: any): Observable<UserData> {
-    return this.http.post<UserData>(`${this.userUrl}/register`, body);
+  createUser(body: any): Observable<UserModel> {
+    return this.http.post<UserModel>(`${this.userUrl}/AddUser`, body);
   }
-  updateUser(id: string, body: any): Observable<UserData> {
-    return this.http.put<UserData>(`${this.userUrl}/${id}`, body);
+  updateUser(id: string, body: any): Observable<UserModel> {
+    return this.http.put<UserModel>(`${this.userUrl}/EditUser/${id}`, body);
   }
   deleteUser(id: string): Observable<any> {
-    return this.http.delete(`${this.userUrl}/${id}`);
+    return this.http.delete(`${this.userUrl}/DeleteUser/${id}`);
   }
 }

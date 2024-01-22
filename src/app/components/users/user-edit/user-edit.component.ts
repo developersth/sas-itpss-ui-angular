@@ -1,6 +1,6 @@
 import { Component, Input, NgZone, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { User } from "../../../models/user.model";
+import { UserModel } from "../../../models/user.model";
 import { RestService } from "../../../shared/services/rest.service";
 import {
   FormBuilder,
@@ -22,7 +22,7 @@ import { Roles } from "app/models/roles.model";
 export class UserEditComponent implements OnInit {
   userForm: FormGroup;
   id: string = "";
-  user: User[];
+  user: UserModel[];
   roles: Roles[];
 
   @Input() data: any = {};

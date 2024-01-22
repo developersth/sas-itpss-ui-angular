@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { UserData } from "../../../models/user.model";
+import { UserModel } from "../../../models/user.model";
 import { RestService } from "app/shared/services/rest.service";
 import { NgbModal, NgbModalOptions } from "@ng-bootstrap/ng-bootstrap";
 import { UserEditComponent } from "../user-edit/user-edit.component";
@@ -14,7 +14,7 @@ import { Roles } from "app/models/roles.model";
   providers:[RestService]
 })
 export class UserListComponent implements OnInit {
-  users: UserData;
+  users: UserModel[];
   txtNA:string= 'ไม่ระบุ';
 
 
@@ -31,9 +31,9 @@ export class UserListComponent implements OnInit {
   }
   getUsers() {
     this.service.getUsers().subscribe((data:any) => {
-      if (data && data.users){
+      if (data){
         this.users = data;
-        console.log(this.users);
+        console.log(data);
       }
 
     });
@@ -56,7 +56,7 @@ export class UserListComponent implements OnInit {
         }
       });
   }
-  addData() {
+  addUser() {
     let ngbModalOptions: NgbModalOptions = {
       backdrop: "static",
       size: "md",
@@ -96,7 +96,7 @@ export class UserListComponent implements OnInit {
             this.getUsers();
           },
           (error: any) => {
-            this.spinner.hide();
+            //this.spinner.hide();
             this.swal.showDialog("error", "เกิดข้อผิดพลาด : " + error);
           }
         );

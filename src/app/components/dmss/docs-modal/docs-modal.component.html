@@ -4,224 +4,267 @@
       <div class="content-header">จัดการเอกสาร #</div>
     </div>
   </div>
-  <div class="row">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header  layout-dark">
-          <div class="row">
-            <div class="col-7">
-              <h4 class="card-title">PO Information</h4>
-            </div>
-            <div class="row col-5">
-              <div class="col">
-                <label for="basicInput">เลขที่เอกสาร :</label>
-                <input type="text" class="form-control" readonly="readonly" id="basicInput" value="DOC-20240117-00001">
-              </div>
-              <div class="col">
-                <label for="basicInput">วันที่ :</label>
-                <div class="form-inline">
-                  <div class="input-group" style="width: 100%;">
-                    <input class="form-control" readonly (click)="dpStart.toggle()" placeholder="dd/mm/yyyy" name="dp"
-                      [(ngModel)]="dtStart" ngbDatepicker [dayTemplate]="customDay" [markDisabled]="isDisabled"
-                      #dpStart="ngbDatepicker">
-                    <div class="input-group-append">
-                      <div class="input-group-text" (click)="dpStart.toggle()">
-                        <i class="ft ft-calendar" style="cursor: pointer;"></i>
+  <form [formGroup]="recipeForm" class="form-container">
+    <h2 class="add-header">Add Recipe Form</h2>
+    <div class="input-container">
+      <label>Chef Name</label>
+      <input formControlName="chef_name">
+    </div>
+    <div class="input-container">
+      <label>Location</label>
+      <input formControlName="location">
+    </div>
+    <div class="recipe-header">
+      <h2 class="add-header">Add recipe</h2> <button class="add-btn" (click)=addItem()>Add</button>
+    </div>
+    <div formArrayName="reciepe">
+      <div *ngFor="let User of itemControls.controls;  let i=index">
+        <div [formGroupName]="i" class="recipe-container">
+          <div class="sub_input-container">
+            <label>Recipe Name</label>
+            <input formControlName="reciepe_name">
+          </div>
+          <div class="sub_input-container">
+            <label>Ingredient</label>
+            <input formControlName="ingredient">
+          </div>
+          <div class="sub_input-container">
+            <label>Cooking Time</label>
+            <input formControlName="cooking_time">
+          </div>
+          <div class="sub_inputbtn-container">
+            <button class="remove-btn" (click)=removeItem(i)>remove</button>
+          </div>
+        </div>
+        <hr>
+      </div>
+    </div>
+    <button (click)="submitForm()" class="submit-btn">SUBMIT</button>
+  </form>
+  <!-- Basic Form & Hidden Label Layouts starts -->
+  <section id="basic-hidden-label-form-layouts">
+    <div class="row match-height">
+      <!-- Basic Form starts -->
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Po Infomation</h4>
+          </div>
+          <div class="card-content">
+            <div class="card-body">
+              <form [formGroup]="FPOForm" (ngSubmit)="saveFPO()">
+                <div class="row">
+                  <div class="row col-7">
+                  </div>
+                  <div class="row col-5">
+                    <div class="col">
+                      <label for="basic-form-4">เลขที่เอกสาร</label>
+                      <input type="text" class="form-control" formControlName="docNo" readonly="readonly">
+                    </div>
+                    <div class="col">
+                      <label for="basicInput">วันที่ :</label>
+                      <div class="form-inline">
+                        <div class="input-group" style="width: 100%;">
+                          <input class="form-control" formControlName="docDate" readonly (click)="dpStart.toggle()"
+                            placeholder="dd/mm/yyyy" name="dp" [(ngModel)]="dtStart" ngbDatepicker
+                            [dayTemplate]="customDay" [markDisabled]="isDisabled" #dpStart="ngbDatepicker">
+                          <div class="input-group-append">
+                            <div class="input-group-text" (click)="dpStart.toggle()">
+                              <i class="ft ft-calendar" style="cursor: pointer;"></i>
+                            </div>
+                          </div>
+                          <ng-template #customDay let-date="date" let-currentMonth="currentMonth"
+                            let-selected="selected" let-disabled="disabled">
+                            <span class="custom-day" [class.weekend]="isWeekend(date)" [class.bg-primary]="selected"
+                              [class.hidden]="date.month !== currentMonth" [class.text-muted]="disabled">
+                              {{ date.day }}
+                            </span>
+                          </ng-template>
+                        </div>
                       </div>
                     </div>
-                    <ng-template #customDay let-date="date" let-currentMonth="currentMonth" let-selected="selected"
-                      let-disabled="disabled">
-                      <span class="custom-day" [class.weekend]="isWeekend(date)" [class.bg-primary]="selected"
-                        [class.hidden]="date.month !== currentMonth" [class.text-muted]="disabled">
-                        {{ date.day }}
-                      </span>
-                    </ng-template>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-
-        </div>
-        <div class="card-content">
-          <div class="card-body">
-            <form >
-              <div class="row">
-                <div class="col-md-3">
-                  <fieldset class="form-group">
-                    <label for="type">Status :</label>
-                    <div class="input-group">
-                      <select class="form-control" [(ngModel)]="statusId" [ngModelOptions]="{standalone: true}" id="inputGroupSelect">
-                        <option value=0>---ไม่ระบุ---</option>
-                        <option *ngFor="let item of status" [value]="item.statusId">{{item.statusName}}
-                        </option>
+                <div class="form-row">
+                  <div class="col-md-4 col-12">
+                    <div class="form-group mb-2">
+                      <label for="basic-form-6">Status</label>
+                      <select class="form-control" formControlName="statusId">
+                        <option value="0" selected disabled>---ไม่ระบุ---</option>
+                        <option *ngFor="let item of status" [value]="item.statusId">{{ item.statusName }}</option>
                       </select>
                     </div>
-                  </fieldset>
-                </div>
-                <div class="col-md-3">
-                  <fieldset class="form-group">
-                    <label for="type">วันที่ของถึง:</label>
-                    <div class="form-inline">
-                      <div class="input-group" style="width: 100%;">
-                        <input class="form-control" readonly (click)="dpEnd.toggle()" placeholder="dd/mm/yyyy" name="dp"
-                          [(ngModel)]="dtEnd" ngbDatepicker [dayTemplate]="customDay" [markDisabled]="isDisabled"
-                          #dpEnd="ngbDatepicker">
-                        <div class="input-group-append">
-                          <div class="input-group-text" (click)="dpEnd.toggle()">
-                            <i class="ft ft-calendar" style="cursor: pointer;"></i>
+                  </div>
+                  <div class="col-md-4 col-12">
+                    <div class="form-group mb-2">
+                      <label for="basic-form-2">วันที่ของมาถึง</label>
+                      <div class="form-inline">
+                        <div class="input-group" style="width: 100%;">
+                          <input class="form-control" formControlName="arrived" readonly (click)="dpEnd.toggle()"
+                            placeholder="dd/mm/yyyy" name="dp" [(ngModel)]="dtEnd" ngbDatepicker
+                            [dayTemplate]="customDay" [markDisabled]="isDisabled" #dpEnd="ngbDatepicker">
+                          <div class="input-group-append">
+                            <div class="input-group-text" (click)="dpEnd.toggle()">
+                              <i class="ft ft-calendar" style="cursor: pointer;"></i>
+                            </div>
                           </div>
+                          <ng-template #customDay let-date="date" let-currentMonth="currentMonth"
+                            let-selected="selected" let-disabled="disabled">
+                            <span class="custom-day" [class.weekend]="isWeekend(date)" [class.bg-primary]="selected"
+                              [class.hidden]="date.month !== currentMonth" [class.text-muted]="disabled">
+                              {{ date.day }}
+                            </span>
+                          </ng-template>
                         </div>
-                        <ng-template #customDay let-date="date" let-currentMonth="currentMonth" let-selected="selected"
-                          let-disabled="disabled">
-                          <span class="custom-day" [class.weekend]="isWeekend(date)" [class.bg-primary]="selected"
-                            [class.hidden]="date.month !== currentMonth" [class.text-muted]="disabled">
-                            {{ date.day }}
-                          </span>
-                        </ng-template>
                       </div>
                     </div>
-                  </fieldset>
+                  </div>
+                  <div class="col-md-4 col-12">
+                    <div class="form-group mb-2">
+                      <label for="basic-form-1">หมายเลข FPO</label>
+                      <input type="text" id="basic-form-1" formControlName="fpoNo" class="form-control" name="fname">
+                    </div>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-bordered table-striped table-hover">
+                      <thead>
+                        <tr class="bg-info" style="color: white;">
+                          <th>Item</th>
+                          <th>เลขที่ใบสั่งซื้อ (PO)</th>
+                          <th>เลขที่ใบขอซื้อ (PR)</th>
+                          <th>เลขที่ Job</th>
+                          <th>#</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let control of pOlistControls.controls; let idx = index">
+                          <div [formGroupName]="idx">
+                            <input type="text" class="form-control" formControlName="poNo">
+                          </div>
+                          <td>
+                            <label>{{idx + 1 }}</label>
+             
+                          </td>
+                          <td>
+                            
+                            <!-- <input type="text" class="form-control" formControlName="poNo"> -->
+    
+                            <!-- Add file input for poPath if needed -->
+                            <!-- <label for="basic-form-8">เลือกไฟล์</label>
+                            <input type="file" class="form-control" formControlName="control.poPath" ng2FileSelect
+                            accept="application/pdf"> -->
+                          </td>
+
+                          <td>
+                            <button class="btn btn-danger" (click)="removeItemPO(idx)"><i class="fa fa-trash"></i></button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <button class="btn btn-outline-info" (click)="addItemPO()"><i
+                        class="fa fa-plus">เพิ่มรายการ</i></button>
+                  </div>
+
                 </div>
-                <div class="col-md-6">
-                  <fieldset class="form-group">
-                    <label for="type">หมายเลข (SPO):</label>
-                    <input type="text" class="form-control square" id="horizontal-form-1" name="first-name">
-                  </fieldset>
-                </div>
-              </div>
-              <div class="row">
-                <div class="table-responsive">
-                  <table class="table table-bordered table-striped table-hover">
-                    <thead>
-                      <tr class="bg-info" style="color: white;">
-                        <th>Item</th>
-                        <th>เลขที่ใบสั่งซื้อ (PO)</th>
-                        <th>เลขที่ใบขอซื้อ (PR)</th>
-                        <th>เลขที่ Job</th>
-                        <th>#</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let item of itemSPO;let idx = index">
-                        <td>
-                          <label  [(ngModel)]="item.item" >{{idx+1}}</label>
-                        </td>
-                        <td>
-                            <input type="text" class="form-control" id="horizontal-form-1" [(ngModel)]="item.poNo" [ngModelOptions]="{standalone: true}">
-                            <label class="custom-file mt-1">
-                              <input type="file" class="btn btn-outline-success" [(ngModel)]="item.prFile" ng2FileSelect>
-                              <span class="custom-file-control"></span>
-                            </label>
-
-                        </td>
-                        <td>
-                          <input type="text" class="form-control" id="horizontal-form-1" [(ngModel)]="item.prNo" [ngModelOptions]="{standalone: true}">
-                          <label class="custom-file mt-1">
-                            <input type="file" class="btn btn-outline-success"  [(ngModel)]="item.prFile" ng2FileSelect>
-                            <span class="custom-file-control"></span>
-                          </label>
-
-                        </td>
-                        <td>
-                          <input type="text" class="form-control" id="horizontal-form-1" [(ngModel)]="item.jobNo" [ngModelOptions]="{standalone: true}">
-                        </td>
-                        <td>
-                          <button class="btn btn-danger" (click)="removeItemPO(item)"><i class="fa fa-trash"></i></button>
-                        </td>
-                      </tr>
-
-                    </tbody>
-                  </table>
-                  <button class="btn btn-outline-info" (click)="addItemPO()"><i class="fa fa-plus">เพิ่มรายการ</i></button>
-                </div>
-
-              </div>
-              <div class="row">
-                <div class="col-md-6 col-12">
-                  <div class="form-group row">
-                    <label class="col-md-3 col-form-label" for="horizontal-form-1">ผู้ขอซื้อ</label>
-                    <div class="col-md-9">
-                      <input type="text" class="form-control square" id="horizontal-form-1" name="first-name">
+                <div class="form-row">
+                  <div class="col-md-6 col-12">
+                    <label for="basic-form-7">ผู้ขอซื้อ</label>
+                    <div class="form-inline">
+                      <div class="input-group mb-2" style="width: 100%;">
+                        <select id="basic-form-7" name="budget" class="form-control" formControlName="buyerId">
+                          <option value="0" selected disabled>--เลือกผู้ขอซื้อ--</option>
+                          <option value="1">Nattida</option>
+                          <option value="2">Chanarong</option>
+                          <option value="3">Sattawat</option>
+                        </select>
+                        <div class="input-group-append">
+                          <button class="btn btn-success" (click)="addUser()"> <i class="ft ft-plus"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-12">
+                    <label for="basic-form-7">Supplier</label>
+                    <div class="form-inline">
+                      <div class="input-group mb-2" style="width: 100%;">
+                        <select id="basic-form-7" name="budget" class="form-control" formControlName="supplierId">
+                          <option value="0" selected disabled>--เลือก Supplier--</option>
+                          <option value="1">FMC</option>
+                          <option value="2">Chemtec</option>
+                          <option value="3">Scully</option>
+                        </select>
+                        <div class="input-group-append">
+                          <button class="btn btn-success"> <i class="ft ft-plus"></i></button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6 col-12">
-                  <div class="form-group row">
-                    <label class="col-md-3 col-form-label" for="horizontal-form-2">ชว.</label>
-                    <div class="col-md-9">
+                <div class="form-row">
+                  <div class="col-md-6 col-12">
+                    <div class="form-group mb-2">
+                      <label for="basic-form-3">Payment Term</label>
+                      <input type="text" id="basic-form-3" class="form-control" name="Payment Term"
+                        formControlName="paymentTerm">
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-12">
+                    <label for="basic-form-7">Deliver Term</label>
+                    <div class="form-inline">
+                      <div class="input-group mb-2" style="width: 100%;">
+                        <select id="basic-form-7" name="budget" class="form-control" formControlName="deliveryTermId">
+                          <option value="0" selected disabled>--เลือก Supplier--</option>
+                          <option value="1">30 วัน</option>
+                          <option value="2">60 วัน</option>
+                          <option value="3">90 วัน</option>
+                        </select>
+                        <div class="input-group-append">
+                          <button class="btn btn-success"> <i class="ft ft-plus"></i></button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-12">
+                    <div class="form-group mb-2">
+                      <label for="basic-form-3">ใบชั่งตวงวัด</label>
                       <ul class="list-unstyled mb-0 mt-1">
                         <li class="d-inline-block mr-2">
                           <div class="radio">
-                            <input type="radio" name="basic-radio-1" id="radio1" checked>
+                            <input type="radio" id="radio1" [checked]="FPOForm.get('isMethods').value === true" (change)="FPOForm.get('isMethods').setValue(true)">
                             <label for="radio1">ทำ</label>
                           </div>
                         </li>
                         <li class="d-inline-block mr-2">
                           <div class="radio">
-                            <input type="radio" name="basic-radio-1" id="radio2">
+                            <input type="radio" id="radio2" [checked]="FPOForm.get('isMethods').value === false" (change)="FPOForm.get('isMethods').setValue(false)">
                             <label for="radio2">ไม่ทำ</label>
                           </div>
                         </li>
                       </ul>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div class="row mb-md-3">
-                <div class="col-md-6 col-12">
-                  <div class="form-group row">
-                    <label class="col-md-3 col-form-label" for="horizontal-form-3">Supplier</label>
-                    <div class="col-md-9">
-                      <input type="text" class="form-control square" id="horizontal-form-3" name="username">
+                  <div class="col-md-6 col-12">
+                    <div class="form-group mb-2">
+                      <label for="basic-form-9">หมายเหตุ</label>
+                      <textarea id="basic-form-9" rows="4" class="form-control" name="comment"
+                        formControlName="remarks"></textarea>
                     </div>
                   </div>
                 </div>
-                <div class="col-md-6 col-12">
-                  <div class="form-group row">
-                    <label class="col-md-3 col-form-label" for="horizontal-form-4">Item No.(PO)</label>
-                    <div class="col-md-9">
-                      <input type="text" class="form-control square" id="horizontal-form-4" name="nick-name">
-                    </div>
-                  </div>
+                <div class="row justify-content-end">
+                  <button type="submit" class="btn btn-lg btn-primary"><i
+                      class="ft-check-square mr-1"></i>บันทึก</button>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 col-12">
-                  <div class="form-group row">
-                    <label class="col-md-3 col-form-label" for="horizontal-form-5">Payment Term</label>
-                    <div class="col-md-9">
-                      <input type="text" class="form-control square" id="horizontal-form-5" name="e-mail">
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label class="col-md-3 col-form-label" for="horizontal-form-6">Delivery Term</label>
-                    <div class="col-md-9">
-                      <input type="text" class="form-control square" id="horizontal-form-6" name="website">
-                    </div>
-                  </div>
-
-                </div>
-                <div class="col-md-6 col-12">
-                  <div class="form-group row">
-                    <label class="col-md-3 col-form-label" for="horizontal-form-9">หมายเหตุ</label>
-                    <div class="col-md-9">
-                      <textarea id="horizontal-form-9" rows="6" class="form-control square" name="comment3"></textarea>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="row justify-content-center">
-                <button type="submit" class="btn btn-lg btn-primary"><i class="ft-check-square mr-1"></i>บันทึก</button>
-              </div>
-
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       </div>
+      <!-- Basic Form ends -->
     </div>
+  </section>
+  <!-- Basic Form & Hidden Label Layouts ends -->
+  <!--   <div class="row">
     <div class="col-12">
       <div class="card">
         <div class="card-header  layout-dark">
@@ -305,5 +348,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </section>

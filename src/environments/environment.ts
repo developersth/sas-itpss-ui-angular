@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:5050/api',
+  apiUrl: 'http://localhost:5000/api',
   keyLocalAuthenInfo: 'keyLocalAuthenInfo',
   fullNameLocalAuthen: 'fullNameLocalAuthen',
   avatarLocalAuthen: 'avatarLocalAuthen'
