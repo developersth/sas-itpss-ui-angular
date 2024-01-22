@@ -93,3 +93,8 @@ docker compose  down
 ## docker run mssql databse
 docker compose -f docker-compose-mssql.yml up --build  -d
 docker compose -f docker-compose-mssql-arm.yml up --build  -d
+
+## mongo database
+docker compose -f docker-compose-mogodb.yml up --build  -d
+
+docker compose -f docker-compose-mogodb.yml down 

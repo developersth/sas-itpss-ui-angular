@@ -30,17 +30,21 @@
                     <th>ชื่อผู้ใช้งาน</th>
                     <th>ชื่อ</th>
                     <th>นามสกุล</th>
+                    <th>อีเมล์</th>
+                    <th>วันเกิด</th>
                     <th>avatar</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let user of users">
+                  <tr *ngFor="let user of users.users">
                     <td>{{ user.id }}</td>
                     <td>{{ user.username }}</td>
-                    <td>{{ user.fname }}</td>
-                    <td>{{ user.lname }}</td>
-                    <td><img src="{{user.avatar}}" width="40px" alt="logo"></td>
+                    <td>{{ user.firstName }}</td>
+                    <td>{{ user.lastName }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.birthDate }}</td>
+                    <td><img src="{{user.image}}" width="40px" alt="logo"></td>
                     <td>
                       <a class="btn btn-sm btn-primary" (click)="editData(user)">
                         <i class="fa fa-pencil">แก้ไข</i>

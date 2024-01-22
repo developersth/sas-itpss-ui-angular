@@ -14,7 +14,7 @@ export class AuthService {
   private userDetails: firebase.User = null;
 
   token: string;
-  private readonly apiUrl = `${environment.apiUrl}`;
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
   //private readonly tokenKey = "jwt";
   private readonly keyLocalAuthenInfo = environment.keyLocalAuthenInfo;
   private readonly fullNameLocalAuthen = environment.fullNameLocalAuthen;
@@ -53,9 +53,9 @@ export class AuthService {
     return  this.http.post<string>(`${this.apiUrl}/login`, payload).pipe(
       delay(500),
       tap((response: any) => {
-        localStorage.setItem(this.keyLocalAuthenInfo, response.accessToken);
+        localStorage.setItem(this.keyLocalAuthenInfo, response.token);
         localStorage.setItem(this.fullNameLocalAuthen, response.user.username);
-        localStorage.setItem(this.avatarLocalAuthen, response.user.avatar);
+        //localStorage.setItem(this.avatarLocalAuthen, response.image);
       }),
       tap(() => this.isAuthenticatedSubject.next(true))
     );

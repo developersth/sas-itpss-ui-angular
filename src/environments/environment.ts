@@ -5,7 +5,7 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://www.melivecode.com/api',
+  apiUrl: 'http://localhost:5050/api',
   keyLocalAuthenInfo: 'keyLocalAuthenInfo',
   fullNameLocalAuthen: 'fullNameLocalAuthen',
   avatarLocalAuthen: 'avatarLocalAuthen'

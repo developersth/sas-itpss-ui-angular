@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { User } from "../../../models/user.model";
+import { UserData } from "../../../models/user.model";
 import { RestService } from "app/shared/services/rest.service";
 import { NgbModal, NgbModalOptions } from "@ng-bootstrap/ng-bootstrap";
 import { UserEditComponent } from "../user-edit/user-edit.component";
@@ -14,7 +14,7 @@ import { Roles } from "app/models/roles.model";
   providers:[RestService]
 })
 export class UserListComponent implements OnInit {
-  users: User[];
+  users: UserData;
   txtNA:string= 'ไม่ระบุ';
 
 
@@ -30,9 +30,12 @@ export class UserListComponent implements OnInit {
     this.getUsers();
   }
   getUsers() {
-    this.service.getUsers().subscribe((user:any) => {
-      this.users = user;
-      console.log(this.users);
+    this.service.getUsers().subscribe((data:any) => {
+      if (data && data.users){
+        this.users = data;
+        console.log(this.users);
+      }
+
     });
   }
   deleteUser(id: any) {

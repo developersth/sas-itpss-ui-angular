@@ -7,7 +7,7 @@ import { environment } from "environments/environment";
 import { forEach } from "core-js/core/array";
 
 //----------------------------------------------------------------
-import { User } from "../../models/user.model";
+import { UserData } from "app/models/user.model";
 import { Roles } from "app/models/roles.model";
 import { Truck } from "../../models/truck.model";
 import { Response } from "../../models/response.model";
@@ -43,17 +43,17 @@ export class RestService {
     return this.http.get<Roles[]>(`${this.rolesUrl}/GetRoles`);
   }
   //----------------------------------------------------------------
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.userUrl}`);
+  getUsers(): Observable<UserData[]> {
+    return this.http.get<UserData[]>(`${this.userUrl}`);
   }
-  getUser(id: number): Observable<User> {
-    return this.http.get<User>(`${this.userUrl}/${id}`);
+  getUser(id: number): Observable<UserData> {
+    return this.http.get<UserData>(`${this.userUrl}/${id}`);
   }
-  createUser(body: any): Observable<User> {
-    return this.http.post<User>(`${this.userUrl}/register`, body);
+  createUser(body: any): Observable<UserData> {
+    return this.http.post<UserData>(`${this.userUrl}/register`, body);
   }
-  updateUser(id: string, body: any): Observable<User> {
-    return this.http.put<User>(`${this.userUrl}/${id}`, body);
+  updateUser(id: string, body: any): Observable<UserData> {
+    return this.http.put<UserData>(`${this.userUrl}/${id}`, body);
   }
   deleteUser(id: string): Observable<any> {
     return this.http.delete(`${this.userUrl}/${id}`);

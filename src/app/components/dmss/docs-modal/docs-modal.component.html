@@ -110,9 +110,8 @@
                         </td>
                         <td>
                             <input type="text" class="form-control" id="horizontal-form-1" [(ngModel)]="item.poNo" [ngModelOptions]="{standalone: true}">
-
                             <label class="custom-file mt-1">
-                              <input type="file"  [(ngModel)]="item.poFile" ng2FileSelect>
+                              <input type="file" class="btn btn-outline-success" [(ngModel)]="item.prFile" ng2FileSelect>
                               <span class="custom-file-control"></span>
                             </label>
 
@@ -120,7 +119,7 @@
                         <td>
                           <input type="text" class="form-control" id="horizontal-form-1" [(ngModel)]="item.prNo" [ngModelOptions]="{standalone: true}">
                           <label class="custom-file mt-1">
-                            <input type="file"  [(ngModel)]="item.prFile" ng2FileSelect>
+                            <input type="file" class="btn btn-outline-success"  [(ngModel)]="item.prFile" ng2FileSelect>
                             <span class="custom-file-control"></span>
                           </label>
 
