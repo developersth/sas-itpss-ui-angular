@@ -4,43 +4,6 @@
       <div class="content-header">จัดการเอกสาร #</div>
     </div>
   </div>
-  <form [formGroup]="recipeForm" class="form-container">
-    <h2 class="add-header">Add Recipe Form</h2>
-    <div class="input-container">
-      <label>Chef Name</label>
-      <input formControlName="chef_name">
-    </div>
-    <div class="input-container">
-      <label>Location</label>
-      <input formControlName="location">
-    </div>
-    <div class="recipe-header">
-      <h2 class="add-header">Add recipe</h2> <button class="add-btn" (click)=addItem()>Add</button>
-    </div>
-    <div formArrayName="reciepe">
-      <div *ngFor="let User of itemControls.controls;  let i=index">
-        <div [formGroupName]="i" class="recipe-container">
-          <div class="sub_input-container">
-            <label>Recipe Name</label>
-            <input formControlName="reciepe_name">
-          </div>
-          <div class="sub_input-container">
-            <label>Ingredient</label>
-            <input formControlName="ingredient">
-          </div>
-          <div class="sub_input-container">
-            <label>Cooking Time</label>
-            <input formControlName="cooking_time">
-          </div>
-          <div class="sub_inputbtn-container">
-            <button class="remove-btn" (click)=removeItem(i)>remove</button>
-          </div>
-        </div>
-        <hr>
-      </div>
-    </div>
-    <button (click)="submitForm()" class="submit-btn">SUBMIT</button>
-  </form>
   <!-- Basic Form & Hidden Label Layouts starts -->
   <section id="basic-hidden-label-form-layouts">
     <div class="row match-height">
@@ -52,7 +15,7 @@
           </div>
           <div class="card-content">
             <div class="card-body">
-              <form [formGroup]="FPOForm" (ngSubmit)="saveFPO()">
+              <form [formGroup]="fpoForm" (ngSubmit)="saveFPO()">
                 <div class="row">
                   <div class="row col-7">
                   </div>
@@ -137,28 +100,40 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr *ngFor="let control of pOlistControls.controls; let idx = index">
-                          <div [formGroupName]="idx">
-                            <input type="text" class="form-control" formControlName="poNo">
-                          </div>
-                          <td>
-                            <label>{{idx + 1 }}</label>
-             
-                          </td>
-                          <td>
-                            
-                            <!-- <input type="text" class="form-control" formControlName="poNo"> -->
-    
-                            <!-- Add file input for poPath if needed -->
-                            <!-- <label for="basic-form-8">เลือกไฟล์</label>
-                            <input type="file" class="form-control" formControlName="control.poPath" ng2FileSelect
-                            accept="application/pdf"> -->
-                          </td>
+                        <ng-container formArrayName="pOlist">
+                          <ng-container
+                            *ngFor="
+                              let control of pOlistControls.controls;
+                              let idx = index
+                            "
+                          >
+                            <tr [formGroupName]="idx">
+                              <td>
+                                <input type="text" class="form-control" markDisabled="true" formControlName="item">
+                              </td>
+                              <td>
+                                <input type="text" class="form-control" formControlName="poNo">
+                                <label for="basic-form-8">เลือกไฟล์</label>
+                                <input type="file" class="form-control" formControlName="poPath" ng2FileSelect
+                                  accept="application/pdf">
+                              </td>
 
-                          <td>
-                            <button class="btn btn-danger" (click)="removeItemPO(idx)"><i class="fa fa-trash"></i></button>
-                          </td>
-                        </tr>
+                              <td>
+                                <input type="text" class="form-control" formControlName="prNo">
+                                <label for="basic-form-8">เลือกไฟล์</label>
+                                <input type="file" class="form-control" formControlName="prPath" ng2FileSelect
+                                  accept="application/pdf">
+                              </td>
+                              <td>
+                                <input type="text" class="form-control" formControlName="jobNo">
+                              </td>
+                              <td>
+                                <button class="btn btn-danger" (click)="removeItemPO(idx)"><i
+                                    class="fa fa-trash"></i></button>
+                              </td>
+                            </tr>
+                          </ng-container>
+                        </ng-container>
                       </tbody>
                     </table>
                     <button class="btn btn-outline-info" (click)="addItemPO()"><i
@@ -230,13 +205,15 @@
                       <ul class="list-unstyled mb-0 mt-1">
                         <li class="d-inline-block mr-2">
                           <div class="radio">
-                            <input type="radio" id="radio1" [checked]="FPOForm.get('isMethods').value === true" (change)="FPOForm.get('isMethods').setValue(true)">
+                            <input type="radio" id="radio1" [checked]="fpoForm.get('isMethods').value === true"
+                              (change)="fpoForm.get('isMethods').setValue(true)">
                             <label for="radio1">ทำ</label>
                           </div>
                         </li>
                         <li class="d-inline-block mr-2">
                           <div class="radio">
-                            <input type="radio" id="radio2" [checked]="FPOForm.get('isMethods').value === false" (change)="FPOForm.get('isMethods').setValue(false)">
+                            <input type="radio" id="radio2" [checked]="fpoForm.get('isMethods').value === false"
+                              (change)="fpoForm.get('isMethods').setValue(false)">
                             <label for="radio2">ไม่ทำ</label>
                           </div>
                         </li>

@@ -35,24 +35,15 @@ import { PO } from "../../../models/po.model";
 })
 export class DocsModalComponent implements OnInit {
   constructor(
-    public formBuilder: FormBuilder,
+    public fb: FormBuilder,
     private service: RestService,
     public toastr: ToastrService,
     private spinner: NgxSpinnerService,
     private modalService: NgbModal,
     private activateRoute: ActivatedRoute,
   ) {
-    this.recipeForm = this.formBuilder.group({
-      chef_name: new FormControl("", [Validators.required]),
-      location: new FormControl("", [Validators.required]),
-      reciepe: this.formBuilder.array([
-        this.formBuilder.group({
-          reciepe_name: ['', Validators.required],
-          ingredient: ['', Validators.required],
-          cooking_time: ['', Validators.required],
-        }),
-      ]),
-    })
+    //fpo form
+
   }
   swal = swalFunctions;
   statusId: string;
@@ -60,7 +51,7 @@ export class DocsModalComponent implements OnInit {
   dtEnd: NgbDateStruct;
   now: Date = new Date();
   status: any = [];
-  FPOForm: FormGroup;
+  fpoForm: FormGroup;
   recipeForm!: FormGroup;
   itemSPO: mItemSPO[];
   users: UserModel[];
@@ -75,14 +66,14 @@ export class DocsModalComponent implements OnInit {
 
   }
   initializeFPOForm() {
-    this.FPOForm = this.formBuilder.group({
-      docNo: ['', Validators.required],
-      docDate: [''],
-      statusId: [0, Validators.required], // Default value set to 0
-      arrived: ['', Validators.required],
-      fpoNo: ['', Validators.required],
-      pOlist: this.formBuilder.array([
-        this.formBuilder.group({
+    this.fpoForm = this.fb.group({
+      docNo: new FormControl(""),
+      docDate:  new FormControl(""),
+      statusId:  new FormControl(0), // Default value set to 0
+      arrived:  new FormControl(""),
+      fpoNo: new FormControl("", [Validators.required]),
+      pOlist: this.fb.array([
+        this.fb.group({
           item: [1],
           poNo: [''],
           prNo: [''],
@@ -90,12 +81,12 @@ export class DocsModalComponent implements OnInit {
           prPath: [''],
           jobNo: ['']
         })]),   //Initialize pOlist as a FormArray
-      buyerId: [1, Validators.required],
-      supplierId: [1, Validators.required],
-      paymentTerm: ['', Validators.required],
-      deliveryTermId: [1, Validators.required],
-      isMethods: [false],
-      remarks: ['']
+      buyerId:  new FormControl(0, [Validators.required]),
+      supplierId:  new FormControl(0, [Validators.required]),
+      paymentTerm: new FormControl(""),
+      deliveryTermId: new FormControl(0),
+      isMethods: new FormControl(false),
+      remarks:  new FormControl("")
     });
   
    // let pOlistFormArray = this.FPOForm.get('pOlist') as FormArray;
@@ -163,40 +154,15 @@ export class DocsModalComponent implements OnInit {
       this.users = user;
     });
   }
-  //
-  get itemControls(): any {
-    return this.recipeForm.get('reciepe') as FormArray;
-  }
-
-  addItem() {
-    const items = this.recipeForm.get('reciepe') as FormArray;
-    if (!items.invalid) {
-      items.push(
-        this.formBuilder.group({
-          reciepe_name: ['', Validators.required],
-          ingredient: ['', Validators.required],
-          cooking_time: ['', Validators.required],
-        })
-      );
-    }
-  }
-  removeItem(index: any) {
-    const items = this.recipeForm.get('reciepe') as FormArray;
-    items.removeAt(index);
-  }
-  submitForm() {
-    console.log(this.recipeForm.value);
-  }
-  //
   saveFPO() {
 
   }
   get pOlistControls() {
-    return this.FPOForm.get('pOlist') as FormArray;
+    return this.fpoForm.get('pOlist') as FormArray;
   }
 
   addItemPO() {
-    const newItem: FormGroup = this.formBuilder.group({
+    const newItem: FormGroup = this.fb.group({
       item: [this.pOlistControls.length + 1],
       poNo: [''],
       prNo: [''],
@@ -205,11 +171,11 @@ export class DocsModalComponent implements OnInit {
       jobNo: ['']
     });
 
-    (this.FPOForm.get('pOlist') as FormArray).push(newItem);
+    (this.fpoForm.get('pOlist') as FormArray).push(newItem);
   }
 
   removeItemPO(index: number): void {
-    (this.FPOForm.get('pOlist') as FormArray).removeAt(index);
+    (this.fpoForm.get('pOlist') as FormArray).removeAt(index);
   }
   addUser() {
     let ngbModalOptions: NgbModalOptions = {
