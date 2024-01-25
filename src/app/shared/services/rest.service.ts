@@ -27,6 +27,7 @@ export class RestService {
   //----------------------------------------------------------------
   private userUrl = `${this.apiUrl}/users`;
   private rolesUrl = `${this.apiUrl}/roles`;
+  private purchasingUrl = `${this.apiUrl}/purchasing`;
 
   //----------------------------------------------------------------
   getFullNameLocalAuthen() {
@@ -54,5 +55,9 @@ export class RestService {
   }
   deleteUser(id: string): Observable<any> {
     return this.http.delete(`${this.userUrl}/DeleteUser/${id}`);
+  }
+  //Doc Management
+  saveFPO(body: any): Observable<any> {
+    return this.http.post<any>(`${this.purchasingUrl}/SaveFPO`, body);
   }
 }

@@ -15,7 +15,7 @@
           </div>
           <div class="card-content">
             <div class="card-body">
-              <form [formGroup]="fpoForm" (ngSubmit)="saveFPO()">
+              <form [formGroup]="fpoForm" (ngSubmit)="saveFPO()" enctype="multipart/form-data">
                 <div class="row">
                   <div class="row col-7">
                   </div>
@@ -82,12 +82,6 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-4 col-12">
-                    <div class="form-group mb-2">
-                      <label for="basic-form-1">หมายเลข FPO</label>
-                      <input type="text" id="basic-form-1" formControlName="fpoNo" class="form-control" name="fname">
-                    </div>
-                  </div>
                   <div class="table-responsive">
                     <table class="table table-bordered table-striped table-hover">
                       <thead>
@@ -136,7 +130,7 @@
                         </ng-container>
                       </tbody>
                     </table>
-                    <button class="btn btn-outline-info" (click)="addItemPO()"><i
+                    <button type="button" class="btn btn-outline-info" (click)="addItemPO()"><i
                         class="fa fa-plus">เพิ่มรายการ</i></button>
                   </div>
 

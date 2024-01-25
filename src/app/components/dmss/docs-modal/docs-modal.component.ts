@@ -1,5 +1,4 @@
 import { Component, OnInit } from "@angular/core";
-import { mItemSPO } from "app/models/mItemSPO.model";
 import {
   FormArray,
   FormBuilder,
@@ -22,8 +21,8 @@ import { UserModel } from "app/models/user.model";
 import { UserEditComponent } from "app/components/users/user-edit/user-edit.component";
 import { ActivatedRoute, Router } from "@angular/router";
 import * as swalFunctions from "../../../shared/services/sweetalert.service";
+import { FPOModel } from "app/models/fpo.model";
 //import { FPOModel } from "app/models/procurement.model";
-import { PO } from "../../../models/po.model";
 @Component({
   selector: "app-docs-modal",
   templateUrl: "./docs-modal.component.html",
@@ -53,16 +52,15 @@ export class DocsModalComponent implements OnInit {
   status: any = [];
   fpoForm: FormGroup;
   recipeForm!: FormGroup;
-  itemSPO: mItemSPO[];
   users: UserModel[];
   data: any[];
+  fpoModel : FPOModel;
   ngOnInit(): void {
     //this.buildItemForm(this.data);
     this.initializeFPOForm();
     this.selectToday();
     this.now = new Date();
     this.getStatus();
-    this.getItemSPO();
 
   }
   initializeFPOForm() {
@@ -71,7 +69,6 @@ export class DocsModalComponent implements OnInit {
       docDate:  new FormControl(""),
       statusId:  new FormControl(0), // Default value set to 0
       arrived:  new FormControl(""),
-      fpoNo: new FormControl("", [Validators.required]),
       pOlist: this.fb.array([
         this.fb.group({
           item: [1],
@@ -95,18 +92,6 @@ export class DocsModalComponent implements OnInit {
   }
 
   onSubmit() { }
-  getItemSPO() {
-    return (this.itemSPO = [
-      {
-        item: 1,
-        poNo: "",
-        poFile: "",
-        prNo: "",
-        prFile: "",
-        jobNo: "",
-      }
-    ]);
-  }
   getStatus() {
     return (this.status = [
       { statusId: 1, statusName: "Sending PO" },
@@ -155,7 +140,27 @@ export class DocsModalComponent implements OnInit {
     });
   }
   saveFPO() {
-
+    this.spinner.show(undefined, {
+      type: "ball-triangle-path",
+      size: "medium",
+      bdColor: "rgba(0, 0, 0, 0.8)",
+      color: "#fff",
+      fullScreen: true,
+    });
+    //initial fpo for body
+       // Convert the FormGroup values to a plain JavaScript object
+    this.fpoModel = this.fpoForm.value;
+    this.service.saveFPO(this.fpoModel).subscribe(
+      (res: any) => {
+        this.spinner.hide();
+        this.swal.showDialog("success", "บันทึกข้อมูลสำเร็จแล้ว");
+        this.getUsers();
+      },
+      (error: any) => {
+        //this.spinner.hide();
+        this.swal.showDialog("error", "เกิดข้อผิดพลาด : " + error);
+      }
+    );
   }
   get pOlistControls() {
     return this.fpoForm.get('pOlist') as FormArray;
