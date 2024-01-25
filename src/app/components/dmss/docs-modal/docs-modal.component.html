@@ -97,7 +97,7 @@
                         <ng-container formArrayName="pOlist">
                           <ng-container
                             *ngFor="
-                              let control of pOlistControls.controls;
+                              let control of pOlistControls;
                               let idx = index
                             "
                           >
@@ -108,8 +108,8 @@
                               <td>
                                 <input type="text" class="form-control" formControlName="poNo">
                                 <label for="basic-form-8">เลือกไฟล์</label>
-                                <input type="file" class="form-control" formControlName="poPath" ng2FileSelect
-                                  accept="application/pdf">
+                                <input type="file" class="form-control" formControlName="poPath" (change)="onPoPathFileChange($event, idx)" accept="application/pdf">
+
                               </td>
 
                               <td>

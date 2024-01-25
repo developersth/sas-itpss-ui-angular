@@ -39,10 +39,9 @@ export class DocsModalComponent implements OnInit {
     public toastr: ToastrService,
     private spinner: NgxSpinnerService,
     private modalService: NgbModal,
-    private activateRoute: ActivatedRoute,
+    private activateRoute: ActivatedRoute
   ) {
     //fpo form
-
   }
   swal = swalFunctions;
   statusId: string;
@@ -54,44 +53,42 @@ export class DocsModalComponent implements OnInit {
   recipeForm!: FormGroup;
   users: UserModel[];
   data: any[];
-  fpoModel : FPOModel;
+  fpoModel: FPOModel;
   ngOnInit(): void {
     //this.buildItemForm(this.data);
     this.initializeFPOForm();
     this.selectToday();
     this.now = new Date();
     this.getStatus();
-
   }
   initializeFPOForm() {
     this.fpoForm = this.fb.group({
       docNo: new FormControl(""),
-      docDate:  new FormControl(""),
-      statusId:  new FormControl(0), // Default value set to 0
-      arrived:  new FormControl(""),
+      docDate: new FormControl(""),
+      statusId: new FormControl(0), // Default value set to 0
+      arrived: new FormControl(""),
       pOlist: this.fb.array([
         this.fb.group({
           item: [1],
-          poNo: [''],
-          prNo: [''],
-          poPath: [''],
-          prPath: [''],
-          jobNo: ['']
-        })]),   //Initialize pOlist as a FormArray
-      buyerId:  new FormControl(0, [Validators.required]),
-      supplierId:  new FormControl(0, [Validators.required]),
+          poNo: [""],
+          prNo: [""],
+          poPath: [new FormData],
+          prPath: [""],
+          jobNo: [""],
+        }),
+      ]), //Initialize pOlist as a FormArray
+      buyerId: new FormControl(0, [Validators.required]),
+      supplierId: new FormControl(0, [Validators.required]),
       paymentTerm: new FormControl(""),
       deliveryTermId: new FormControl(0),
       isMethods: new FormControl(false),
-      remarks:  new FormControl("")
+      remarks: new FormControl(""),
     });
-  
-   // let pOlistFormArray = this.FPOForm.get('pOlist') as FormArray;
-  
 
+    // let pOlistFormArray = this.FPOForm.get('pOlist') as FormArray;
   }
 
-  onSubmit() { }
+  onSubmit() {}
   getStatus() {
     return (this.status = [
       { statusId: 1, statusName: "Sending PO" },
@@ -139,6 +136,16 @@ export class DocsModalComponent implements OnInit {
       this.users = user;
     });
   }
+
+  // Method to handle file change for poPath
+  onPoPathFileChange(event: any, index: number) {
+    const fileList: FileList = event.target.files;
+    if (fileList.length > 0) {
+      const file: File = fileList[0];
+      // You can handle the file here, for example, update the form control value
+      this.fpoForm.get('pOlist').get(`${index}`).get('poPath').setValue(file);
+    }
+  }
   saveFPO() {
     this.spinner.show(undefined, {
       type: "ball-triangle-path",
@@ -147,40 +154,82 @@ export class DocsModalComponent implements OnInit {
       color: "#fff",
       fullScreen: true,
     });
-    //initial fpo for body
-       // Convert the FormGroup values to a plain JavaScript object
-    this.fpoModel = this.fpoForm.value;
-    this.service.saveFPO(this.fpoModel).subscribe(
-      (res: any) => {
+
+    // Convert the form data to FormData
+    let formData = new FormData();
+
+    // Iterate over the top-level form controls
+    Object.keys(this.fpoForm.controls).forEach((key) => {
+      const control = this.fpoForm.get(key);
+
+      if (control instanceof FormControl) {
+        // Append scalar values directly
+        if (control.value !== null && control.value) {
+          if (key === "docDate") {
+            const { year, month, day } = this.fpoForm.get("docDate").value as {
+              year: number;
+              month: number;
+              day: number;
+            };
+            formData.set(key, `${year}-${month}-${day}`);
+          } else {
+            formData.set(key, control.value);
+          }
+        }
+      } else if (control instanceof FormGroup) {
+        // If the control is a FormGroup, iterate over its controls
+        Object.keys(control.controls).forEach((nestedKey) => {
+          const nestedControl = control.get(nestedKey);
+          formData.set(`${key}.${nestedKey}`, nestedControl.value);
+        });
+      }
+    });
+    this.pOlistControls.forEach((control, index) => {
+      formData.append(`pOlist[${index}].item`, control.get('item').value);
+      formData.append(`pOlist[${index}].poNo`, control.get('poNo').value);
+      formData.append(`pOlist[${index}].prNo`, control.get('prNo').value);
+      formData.append(`pOlist[${index}].jobNo`, control.get('jobNo').value);
+      formData.append(`pOlist[${index}].poPath`, control.get('poPath').value);
+      formData.append(`pOlist[${index}].prPath`, control.get('prPath').value);
+    });
+    // Convert docDate to a formatted date string
+    // formData.set('isMethods', 'true');
+    // formData.set('statusId', '2');
+
+    console.log(formData);
+
+    // Now, send the form data to your API
+    this.service.saveFPO(formData).subscribe(
+      (res) => {
+        console.log("Form submitted successfully", res);
         this.spinner.hide();
-        this.swal.showDialog("success", "บันทึกข้อมูลสำเร็จแล้ว");
-        this.getUsers();
       },
-      (error: any) => {
-        //this.spinner.hide();
-        this.swal.showDialog("error", "เกิดข้อผิดพลาด : " + error);
+      (error) => {
+        console.error("Error submitting form", error);
+        this.spinner.hide();
       }
     );
   }
+
   get pOlistControls() {
-    return this.fpoForm.get('pOlist') as FormArray;
+    return (this.fpoForm.get("pOlist") as FormArray).controls;
   }
 
   addItemPO() {
     const newItem: FormGroup = this.fb.group({
       item: [this.pOlistControls.length + 1],
-      poNo: [''],
-      prNo: [''],
-      poPath: [''],
-      prPath: [''],
-      jobNo: ['']
+      poNo: [""],
+      prNo: [""],
+      poPath: [""],
+      prPath: [""],
+      jobNo: [""],
     });
 
-    (this.fpoForm.get('pOlist') as FormArray).push(newItem);
+    (this.fpoForm.get("pOlist") as FormArray).push(newItem);
   }
 
   removeItemPO(index: number): void {
-    (this.fpoForm.get('pOlist') as FormArray).removeAt(index);
+    (this.fpoForm.get("pOlist") as FormArray).removeAt(index);
   }
   addUser() {
     let ngbModalOptions: NgbModalOptions = {

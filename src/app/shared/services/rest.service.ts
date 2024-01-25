@@ -57,7 +57,7 @@ export class RestService {
     return this.http.delete(`${this.userUrl}/DeleteUser/${id}`);
   }
   //Doc Management
-  saveFPO(body: any): Observable<any> {
-    return this.http.post<any>(`${this.purchasingUrl}/SaveFPO`, body);
+  saveFPO(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.purchasingUrl}/SaveFPO`, formData);
   }
 }
