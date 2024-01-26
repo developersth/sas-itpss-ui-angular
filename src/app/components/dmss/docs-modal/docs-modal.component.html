@@ -108,7 +108,7 @@
                               <td>
                                 <input type="text" class="form-control" formControlName="poNo">
                                 <label for="basic-form-8">เลือกไฟล์</label>
-                                <input type="file" class="form-control" formControlName="poPath" (change)="onPoPathFileChange($event, idx)" accept="application/pdf">
+                                <input  type="file"  formControlName="poPath" accept="application/pdf">
 
                               </td>
 
@@ -225,6 +225,26 @@
                 <div class="row justify-content-end">
                   <button type="submit" class="btn btn-lg btn-primary"><i
                       class="ft-check-square mr-1"></i>บันทึก</button>
+                </div>
+              </form>
+              <form [formGroup]="form" enctype="multipart/form-data" (ngSubmit)="submitForm()">
+                <div class="form-group">
+                  <label for="trip">Trip:</label>
+                  <input formControlName="name" type="text" id="trip" name="trip" placeholder="Name of the trip">
+                </div>
+              
+                <div class="form-group">
+                  <label for="guide">Guide for the trip:</label>
+                  <input formControlName="guide" type="file" id="guide" name="guide" (change)="uploadFile($event,'guide')">
+                </div>
+              
+                <div class="form-group">
+                  <label for="photo">Guide for the trip:</label>
+                  <input formControlName="photo" type="image" id="photo" name="photo" (change)="uploadFile($event, 'photo')">
+                </div>
+              
+                <div class="form-group">
+                  <button>Upload files</button>
                 </div>
               </form>
             </div>

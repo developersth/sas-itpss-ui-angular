@@ -54,6 +54,7 @@ export class DocsModalComponent implements OnInit {
   users: UserModel[];
   data: any[];
   fpoModel: FPOModel;
+  form: FormGroup;
   ngOnInit(): void {
     //this.buildItemForm(this.data);
     this.initializeFPOForm();
@@ -72,8 +73,8 @@ export class DocsModalComponent implements OnInit {
           item: [1],
           poNo: [""],
           prNo: [""],
-          poPath: [new FormData],
-          prPath: [""],
+          poPath: [[]],
+          prPath: [null],
           jobNo: [""],
         }),
       ]), //Initialize pOlist as a FormArray
@@ -82,13 +83,18 @@ export class DocsModalComponent implements OnInit {
       paymentTerm: new FormControl(""),
       deliveryTermId: new FormControl(0),
       isMethods: new FormControl(false),
-      remarks: new FormControl(""),
-    });
+      remarks: new FormControl("")
 
+    });
+    this.form = this.fb.group({
+      name: [''],
+      photo: [''],
+      guide: ['']
+    })
     // let pOlistFormArray = this.FPOForm.get('pOlist') as FormArray;
   }
 
-  onSubmit() {}
+  onSubmit() { }
   getStatus() {
     return (this.status = [
       { statusId: 1, statusName: "Sending PO" },
@@ -136,16 +142,36 @@ export class DocsModalComponent implements OnInit {
       this.users = user;
     });
   }
+  submitForm() {
+    let formData: any = new FormData(); Object.keys(this.form.controls).forEach(formControlName => {
+      formData.append(formControlName, this.form.get(formControlName).value);
+    });
+/*     this.http.post('http://localhost:4200/api/trip', formData)
+      .subscribe(
+        (response) => console.log(response),
+        (error) => console.log(error)
+      ) */
+  }
+
+  uploadFile(event, fileType: string) {
+    this.updateFile(event, fileType);
+  }
+  private updateFile(event: Event, formControlName: string) {
+    const file = (event.target as HTMLInputElement).files[0]; 
+    //this.form.controls[formControlName].patchValue([file]); 
+    this.form.get('photo').setValue(file);
+    this.form.get(formControlName).updateValueAndValidity()
+  }
 
   // Method to handle file change for poPath
-  onPoPathFileChange(event: any, index: number) {
-    const fileList: FileList = event.target.files;
-    if (fileList.length > 0) {
-      const file: File = fileList[0];
-      // You can handle the file here, for example, update the form control value
-      this.fpoForm.get('pOlist').get(`${index}`).get('poPath').setValue(file);
-    }
+  onPoPathFileChange(event: Event,index:number) {
+    const file = (event.target as HTMLInputElement).files[0];
+     //this.fpoForm.get('pOlist').get(`${index}`).get(formControlName).setValue(file);
+     this.fpoForm.get('pOlist').get(`${index}`).get('poPath').setValue(file);  
+     //this.fpoForm.get('pOlist').get(`${index}`).get('poPath').updateValueAndValidity() 
   }
+
+
   saveFPO() {
     this.spinner.show(undefined, {
       type: "ball-triangle-path",
@@ -185,12 +211,12 @@ export class DocsModalComponent implements OnInit {
       }
     });
     this.pOlistControls.forEach((control, index) => {
-      formData.append(`pOlist[${index}].item`, control.get('item').value);
-      formData.append(`pOlist[${index}].poNo`, control.get('poNo').value);
-      formData.append(`pOlist[${index}].prNo`, control.get('prNo').value);
-      formData.append(`pOlist[${index}].jobNo`, control.get('jobNo').value);
-      formData.append(`pOlist[${index}].poPath`, control.get('poPath').value);
-      formData.append(`pOlist[${index}].prPath`, control.get('prPath').value);
+      formData.set(`pOlist[${index}].item`, control.get('item').value);
+      formData.set(`pOlist[${index}].poNo`, control.get('poNo').value);
+      formData.set(`pOlist[${index}].prNo`, control.get('prNo').value);
+      formData.set(`pOlist[${index}].jobNo`, control.get('jobNo').value);
+      formData.set(`pOlist[${index}].poPath`, control.get('poPath').value);
+      formData.set(`pOlist[${index}].prPath`, control.get('prPath').value);
     });
     // Convert docDate to a formatted date string
     // formData.set('isMethods', 'true');
