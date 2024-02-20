@@ -83,7 +83,7 @@
                     </div>
                   </div>
                   <div class="table-responsive">
-                    <table class="table table-bordered table-striped table-hover">
+                    <table class="table table-bordered table-striped table-hover rounded">
                       <thead>
                         <tr class="bg-info" style="color: white;">
                           <th>Item</th>
@@ -95,20 +95,23 @@
                       </thead>
                       <tbody>
                         <ng-container formArrayName="pOlist">
-                          <ng-container
-                            *ngFor="
+                          <ng-container *ngFor="
                               let control of pOlistControls;
                               let idx = index
-                            "
-                          >
+                            ">
                             <tr [formGroupName]="idx">
                               <td>
                                 <input type="text" class="form-control" markDisabled="true" formControlName="item">
                               </td>
                               <td>
                                 <input type="text" class="form-control" formControlName="poNo">
-                                <label for="basic-form-8">เลือกไฟล์</label>
-                                <input  type="file"  formControlName="poPath" accept="application/pdf">
+
+                                <div ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
+                                  (fileOver)="fileOverBase($event)"
+                                  class="py-5 mb-3 text-center font-medium-5 text-uppercase grey my-drop-zone">
+                                  ลากไฟล์มาที่นี้
+                                  <img src="assets/img/icons/pdf-upload.png" width="50px" alt=""/>
+                                </div>
 
                               </td>
 
@@ -130,8 +133,8 @@
                         </ng-container>
                       </tbody>
                     </table>
-                    <button type="button" class="btn btn-outline-info" (click)="addItemPO()"><i
-                        class="fa fa-plus">เพิ่มรายการ</i></button>
+                    <button type="button" class="btn btn-outline-info" (click)="addItemPO()"><i class="fa fa-plus">
+                        เพิ่มรายการ</i></button>
                   </div>
 
                 </div>
@@ -227,26 +230,7 @@
                       class="ft-check-square mr-1"></i>บันทึก</button>
                 </div>
               </form>
-              <form [formGroup]="form" enctype="multipart/form-data" (ngSubmit)="submitForm()">
-                <div class="form-group">
-                  <label for="trip">Trip:</label>
-                  <input formControlName="name" type="text" id="trip" name="trip" placeholder="Name of the trip">
-                </div>
-              
-                <div class="form-group">
-                  <label for="guide">Guide for the trip:</label>
-                  <input formControlName="guide" type="file" id="guide" name="guide" (change)="uploadFile($event,'guide')">
-                </div>
-              
-                <div class="form-group">
-                  <label for="photo">Guide for the trip:</label>
-                  <input formControlName="photo" type="image" id="photo" name="photo" (change)="uploadFile($event, 'photo')">
-                </div>
-              
-                <div class="form-group">
-                  <button>Upload files</button>
-                </div>
-              </form>
+
             </div>
           </div>
         </div>
