@@ -108,7 +108,7 @@
                               <td>
                                 <input type="text" class="form-control" formControlName="poNo">
                                 <label for="basic-form-8">เลือกไฟล์</label>
-                                <input  type="file"  formControlName="poPath" accept="application/pdf">
+                                <input  type="file"  formControlName="poPath" (change)="onPoPathFileChange($event,idx)"  accept="application/pdf">
 
                               </td>
 

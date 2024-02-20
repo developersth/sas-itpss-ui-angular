@@ -73,7 +73,7 @@ export class DocsModalComponent implements OnInit {
           item: [1],
           poNo: [""],
           prNo: [""],
-          poPath: [[]],
+          poPath: [null],
           prPath: [null],
           jobNo: [""],
         }),
