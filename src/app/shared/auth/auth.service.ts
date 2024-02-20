@@ -49,13 +49,12 @@ export class AuthService {
     // return this._firebaseAuth.signInWithEmailAndPassword(email, password)
 
     const payload = { username, password };
-    debugger
     return  this.http.post<string>(`${this.apiUrl}/login`, payload).pipe(
       delay(500),
       tap((response: any) => {
         localStorage.setItem(this.keyLocalAuthenInfo, response.token);
         localStorage.setItem(this.fullNameLocalAuthen, response.user.username);
-        localStorage.setItem(this.avatarLocalAuthen, response.image);
+        localStorage.setItem(this.avatarLocalAuthen, response.user.image);
       }),
       tap(() => this.isAuthenticatedSubject.next(true))
     );

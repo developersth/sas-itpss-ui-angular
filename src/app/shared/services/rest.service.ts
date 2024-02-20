@@ -60,4 +60,10 @@ export class RestService {
   saveFPO(formData: FormData): Observable<any> {
     return this.http.post<any>(`${this.purchasingUrl}/SaveFPO`, formData);
   }
+  testUploadFile(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.purchasingUrl}/TestUploadFile`, formData);
+  }
+  testUploadFile2(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.purchasingUrl}/TestUploadFile2`, formData);
+  }
 }

@@ -33,6 +33,8 @@ import { FPOModel } from "app/models/fpo.model";
   ],
 })
 export class DocsModalComponent implements OnInit {
+
+  // contructor
   constructor(
     public fb: FormBuilder,
     private service: RestService,
@@ -43,31 +45,56 @@ export class DocsModalComponent implements OnInit {
   ) {
     //fpo form
   }
+  //ตัวแปร
   swal = swalFunctions;
   statusId: string;
   dtStart: NgbDateStruct;
   dtEnd: NgbDateStruct;
   now: Date = new Date();
   status: any = [];
-  fpoForm: FormGroup;
-  recipeForm!: FormGroup;
   users: UserModel[];
   data: any[];
   fpoModel: FPOModel;
+  hasBaseDropZoneOver = false;
+  hasAnotherDropZoneOver = false;
+  //FormGroup
+  fpoForm: FormGroup;
+  recipeForm!: FormGroup;
   form: FormGroup;
   ngOnInit(): void {
     //this.buildItemForm(this.data);
+    this.form = this.fb.group({
+      name: ['', Validators.required],
+      image: [null, Validators.required]
+    });
     this.initializeFPOForm();
     this.selectToday();
     this.now = new Date();
     this.getStatus();
   }
+  createPOItem(): FormGroup {
+    return this.fb.group({
+      item: [1],
+      poNo: [''],
+      prNo: [''],
+      poPath: [null],
+      prPath: [null],
+      jobNo: ['']
+    });
+  }
+
   initializeFPOForm() {
     this.fpoForm = this.fb.group({
-      docNo: new FormControl(""),
-      docDate: new FormControl(""),
-      statusId: new FormControl(0), // Default value set to 0
-      arrived: new FormControl(""),
+      docNo: ['', Validators.required],
+      docDate: [''],
+      statusId: [0],
+      arrived: [''],
+      buyerId: [0],
+      supplierId: [0],
+      paymentTerm: [''],
+      deliveryTermId: [0],
+      isMethods: false,
+      remarks: [''],
       pOlist: this.fb.array([
         this.fb.group({
           item: [1],
@@ -77,24 +104,10 @@ export class DocsModalComponent implements OnInit {
           prPath: [null],
           jobNo: [""],
         }),
-      ]), //Initialize pOlist as a FormArray
-      buyerId: new FormControl(0, [Validators.required]),
-      supplierId: new FormControl(0, [Validators.required]),
-      paymentTerm: new FormControl(""),
-      deliveryTermId: new FormControl(0),
-      isMethods: new FormControl(false),
-      remarks: new FormControl("")
-
+      ]),
     });
-    this.form = this.fb.group({
-      name: [''],
-      photo: [''],
-      guide: ['']
-    })
-    // let pOlistFormArray = this.FPOForm.get('pOlist') as FormArray;
   }
 
-  onSubmit() { }
   getStatus() {
     return (this.status = [
       { statusId: 1, statusName: "Sending PO" },
@@ -123,55 +136,21 @@ export class DocsModalComponent implements OnInit {
     const d = new Date(date.year, date.month - 1, date.day);
     return d.getDay() === 0 || d.getDay() === 6;
   }
-  /*   removeItemPO(item: any) {
-      let index = this.itemSPO.indexOf(item);
-      this.itemSPO.splice(index, 1);
-    }
-    addItemPO(){
-      this.itemSPO.push({
-        item: null,
-        poNo: '',
-        poFile: '',
-        prNo: '',
-        prFile: '',
-        jobNo: '',
-      });
-    } */
+
   getUsers() {
     this.service.getUsers().subscribe((user: any) => {
       this.users = user;
     });
   }
-  submitForm() {
-    let formData: any = new FormData(); Object.keys(this.form.controls).forEach(formControlName => {
-      formData.append(formControlName, this.form.get(formControlName).value);
-    });
-/*     this.http.post('http://localhost:4200/api/trip', formData)
-      .subscribe(
-        (response) => console.log(response),
-        (error) => console.log(error)
-      ) */
+
+  // Angular2 File Upload
+  fileOverBase(e: any): void {
+    this.hasBaseDropZoneOver = e;
   }
 
-  uploadFile(event, fileType: string) {
-    this.updateFile(event, fileType);
+  fileOverAnother(e: any): void {
+    this.hasAnotherDropZoneOver = e;
   }
-  private updateFile(event: Event, formControlName: string) {
-    const file = (event.target as HTMLInputElement).files[0]; 
-    //this.form.controls[formControlName].patchValue([file]); 
-    this.form.get('photo').setValue(file);
-    this.form.get(formControlName).updateValueAndValidity()
-  }
-
-  // Method to handle file change for poPath
-  onPoPathFileChange(event: Event,index:number) {
-    const file = (event.target as HTMLInputElement).files[0];
-     //this.fpoForm.get('pOlist').get(`${index}`).get(formControlName).setValue(file);
-     this.fpoForm.get('pOlist').get(`${index}`).get('poPath').setValue(file);  
-     //this.fpoForm.get('pOlist').get(`${index}`).get('poPath').updateValueAndValidity() 
-  }
-
-
   saveFPO() {
     this.spinner.show(undefined, {
       type: "ball-triangle-path",
@@ -192,6 +171,7 @@ export class DocsModalComponent implements OnInit {
         // Append scalar values directly
         if (control.value !== null && control.value) {
           if (key === "docDate") {
+          //แปลงให้อยู่ในรูปแบบวันที่ ปกติ
             const { year, month, day } = this.fpoForm.get("docDate").value as {
               year: number;
               month: number;
@@ -210,21 +190,18 @@ export class DocsModalComponent implements OnInit {
         });
       }
     });
+    //กำหนดค่า ให้ pOlist ให้กับ formData
     this.pOlistControls.forEach((control, index) => {
-      formData.set(`pOlist[${index}].item`, control.get('item').value);
-      formData.set(`pOlist[${index}].poNo`, control.get('poNo').value);
-      formData.set(`pOlist[${index}].prNo`, control.get('prNo').value);
-      formData.set(`pOlist[${index}].jobNo`, control.get('jobNo').value);
-      formData.set(`pOlist[${index}].poPath`, control.get('poPath').value);
-      formData.set(`pOlist[${index}].prPath`, control.get('prPath').value);
+      ['item', 'poNo', 'prNo', 'jobNo', 'poPath', 'prPath'].forEach(field => {
+        formData.set(`pOlist[${index}].${field}`, control.get(field).value);
+      });
     });
     // Convert docDate to a formatted date string
     // formData.set('isMethods', 'true');
     // formData.set('statusId', '2');
 
-    console.log(formData);
-
-    // Now, send the form data to your API
+  console.log(this.fpoForm.get('pOlist').value);
+            // Now, send the form data to your API
     this.service.saveFPO(formData).subscribe(
       (res) => {
         console.log("Form submitted successfully", res);
@@ -246,8 +223,8 @@ export class DocsModalComponent implements OnInit {
       item: [this.pOlistControls.length + 1],
       poNo: [""],
       prNo: [""],
-      poPath: [""],
-      prPath: [""],
+      poPath: [null],
+      prPath: [null],
       jobNo: [""],
     });
 
