@@ -15,7 +15,7 @@
           </div>
           <div class="card-content">
             <div class="card-body">
-              <form [formGroup]="fpoForm" (ngSubmit)="saveFPO()" enctype="multipart/form-data">
+              <form [formGroup]="fpoForm" enctype="multipart/form-data">
                 <div class="row">
                   <div class="row col-7">
                   </div>
@@ -95,31 +95,63 @@
                       </thead>
                       <tbody>
                         <ng-container formArrayName="pOlist">
+
                           <ng-container *ngFor="
                               let control of pOlistControls;
                               let idx = index
                             ">
                             <tr [formGroupName]="idx">
-                              <td>
+
+                              <td style="width: 10%;">
                                 <input type="text" class="form-control" markDisabled="true" formControlName="item">
                               </td>
                               <td>
-                                <input type="text" class="form-control" formControlName="poNo">
+  
+                                <div class="form-group">
+                                  <input type="text" class="form-control" placeholder="เลขที่ใบสั่งซื้อ (PO) #{{idx+1}}" formControlName="poNo">
+                                </div>
+                                <ngx-file-drop dropZoneLabel="Drop files here" accept=".pdf"
+                                  (onFileDrop)="onSelectFilePOlist($event,idx)" (onFileOver)="fileOver($event)"
+                                  (onFileLeave)="fileLeave($event)">
+                                  <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
 
-                                <div ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
-                                  (fileOver)="fileOverBase($event)"
-                                  class="py-5 mb-3 text-center font-medium-5 text-uppercase grey my-drop-zone">
-                                  ลากไฟล์มาที่นี้
-                                  <img src="assets/img/icons/pdf-upload.png" width="50px" alt=""/>
+                                    <label class="text-dark">ลากไฟล์มาที่นี้.. </label>
+                                    <button class="btn btn-outline-info" (click)="openFileSelector()">
+                                      เลือกไฟล์</button>
+                                  </ng-template>
+                                </ngx-file-drop>
+
+                                <div *ngIf="fpoForm.get('pOlist.' + idx + '.poPath').value">
+                                  <label>{{ fpoForm.get('pOlist.' + idx + '.poPath').value?.name }}</label>
                                 </div>
 
                               </td>
 
                               <td>
-                                <input type="text" class="form-control" formControlName="prNo">
-                                <label for="basic-form-8">เลือกไฟล์</label>
-                                <input type="file" class="form-control" formControlName="prPath" ng2FileSelect
-                                  accept="application/pdf">
+                                <div class="form-group">
+                                  <input type="text" class="form-control" placeholder="เลขที่ใบขอซื้อ (PR) #{{idx+1}}" formControlName="prNo">
+                                </div>
+                                <ngx-file-drop dropZoneLabel="Drop files here" accept=".pdf"
+                                (onFileDrop)="onSelectFilePRlist($event,idx)" (onFileOver)="fileOver($event)"
+                                (onFileLeave)="fileLeave($event)">
+                                <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+
+                                  <label class="text-dark">ลากไฟล์มาที่นี้.. </label>
+                                  <button class="btn btn-outline-info" (click)="openFileSelector()">
+                                    เลือกไฟล์</button>
+                                </ng-template>
+                              </ngx-file-drop>
+
+                              <div *ngIf="fpoForm.get('pOlist.' + idx + '.prPath').value">
+                                <label>{{ fpoForm.get('pOlist.' + idx + '.prPath').value?.name }}</label>
+                              </div>
+                                <!-- <div ng2FileDrop  [uploader]="uploader" [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"  (fileOver)="fileOverBase($event)"
+                                  class="py-5 mb-3 text-center font-medium-5 text-uppercase grey my-drop-zone">
+                                  <input type="file" #fileInput formControlName="poPath" style="display: none" >
+                                  <i class="fa fa-file-pdf"> ลากไฟล์มาที่นี้</i> 
+                                  <br>
+                                   <button class="btn btn-info" (click)="selectFile()"> เลือกไฟล์</button>
+                                 </div> -->
                               </td>
                               <td>
                                 <input type="text" class="form-control" formControlName="jobNo">
@@ -136,6 +168,7 @@
                     <button type="button" class="btn btn-outline-info" (click)="addItemPO()"><i class="fa fa-plus">
                         เพิ่มรายการ</i></button>
                   </div>
+
 
                 </div>
                 <div class="form-row">
@@ -226,7 +259,7 @@
                   </div>
                 </div>
                 <div class="row justify-content-end">
-                  <button type="submit" class="btn btn-lg btn-primary"><i
+                  <button type="submit" class="btn btn-lg btn-primary" (click)="saveFPO()"><i
                       class="ft-check-square mr-1"></i>บันทึก</button>
                 </div>
               </form>
@@ -235,6 +268,7 @@
           </div>
         </div>
       </div>
+
       <!-- Basic Form ends -->
     </div>
   </section>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
 import {
   FormArray,
   FormBuilder,
@@ -22,7 +22,11 @@ import { UserEditComponent } from "app/components/users/user-edit/user-edit.comp
 import { ActivatedRoute, Router } from "@angular/router";
 import * as swalFunctions from "../../../shared/services/sweetalert.service";
 import { FPOModel } from "app/models/fpo.model";
+import { FileUploader } from 'ng2-file-upload';
+import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
+import swal from 'sweetalert2';
 //import { FPOModel } from "app/models/procurement.model";
+const URL = 'https://evening-anchorage-3159.herokuapp.com/api/';
 @Component({
   selector: "app-docs-modal",
   templateUrl: "./docs-modal.component.html",
@@ -30,7 +34,7 @@ import { FPOModel } from "app/models/fpo.model";
   styleUrls: [
     "./docs-modal.component.scss",
     "../../../../assets/sass/libs/datepicker.scss",
-  ],
+  ]
 })
 export class DocsModalComponent implements OnInit {
 
@@ -57,31 +61,24 @@ export class DocsModalComponent implements OnInit {
   fpoModel: FPOModel;
   hasBaseDropZoneOver = false;
   hasAnotherDropZoneOver = false;
+  fileName: string = '';
+  public files: NgxFileDropEntry[] = [];
   //FormGroup
   fpoForm: FormGroup;
   recipeForm!: FormGroup;
   form: FormGroup;
   ngOnInit(): void {
     //this.buildItemForm(this.data);
-    this.form = this.fb.group({
-      name: ['', Validators.required],
-      image: [null, Validators.required]
-    });
     this.initializeFPOForm();
     this.selectToday();
     this.now = new Date();
     this.getStatus();
   }
-  createPOItem(): FormGroup {
-    return this.fb.group({
-      item: [1],
-      poNo: [''],
-      prNo: [''],
-      poPath: [null],
-      prPath: [null],
-      jobNo: ['']
-    });
-  }
+
+  uploader: FileUploader = new FileUploader({
+    url: URL,
+    isHTML5: true
+  });
 
   initializeFPOForm() {
     this.fpoForm = this.fb.group({
@@ -143,15 +140,115 @@ export class DocsModalComponent implements OnInit {
     });
   }
 
-  // Angular2 File Upload
   fileOverBase(e: any): void {
     this.hasBaseDropZoneOver = e;
   }
-
   fileOverAnother(e: any): void {
     this.hasAnotherDropZoneOver = e;
   }
-  saveFPO() {
+  onFileSelected(event: any, idx: number): void {
+    const fileInput = event.target;
+    if (fileInput.files && fileInput.files[0]) {
+      const file = fileInput.files[0];
+
+
+      // Assuming you want to update the form control value
+      const poPathControl = (this.fpoForm.get('pOlist') as FormArray).at(idx).get('poPath');
+      poPathControl.setValue(file);
+
+      // If you also want to update the form validity or perform other actions, you can do so here.
+    }
+  }
+
+  onSelectFilePOlist(files: NgxFileDropEntry[], idx: number): void {
+    this.files = files;
+    for (const droppedFile of files) {
+
+      // Is it a file?
+      if (droppedFile.fileEntry.isFile) {
+        const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+        fileEntry.file((file: File) => {
+
+          // Here you can access the real file
+          //console.log(droppedFile.relativePath, file);
+
+          // Assuming you want to update the form control value
+          const poPathControl = (this.fpoForm.get('pOlist') as FormArray).at(idx).get('poPath');
+          poPathControl.setValue(file);
+
+          // Assuming the library provides the relative path information
+          //const relativePath = droppedFile.relativePath;
+
+          // You can use the relativePath as needed, for example, to display it in your template
+          //console.log('Relative Path:', relativePath);
+        });
+      } else {
+        // It was a directory (empty directories are added, otherwise only files)
+        const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
+        console.log(droppedFile.relativePath, fileEntry);
+      }
+    }
+  }
+  onSelectFilePRlist(files: NgxFileDropEntry[], idx: number): void {
+    this.files = files;
+    for (const droppedFile of files) {
+
+      // Is it a file?
+      if (droppedFile.fileEntry.isFile) {
+        const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+        fileEntry.file((file: File) => {
+
+          // Here you can access the real file
+          //console.log(droppedFile.relativePath, file);
+
+          // Assuming you want to update the form control value
+          const poPathControl = (this.fpoForm.get('pOlist') as FormArray).at(idx).get('prPath');
+          poPathControl.setValue(file);
+        });
+      } else {
+        // It was a directory (empty directories are added, otherwise only files)
+        const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
+        console.log(droppedFile.relativePath, fileEntry);
+      }
+    }
+  }
+  public dropped(files: NgxFileDropEntry[]) {
+    this.files = files;
+    if (files[0].fileEntry.isFile) {
+      const fileEntry = files[0].fileEntry as FileSystemFileEntry;
+      fileEntry.file((file: File) => {
+        console.log(file);
+        // Do something with the file
+      });
+    }
+  }
+
+  public fileOver(event: any) {
+    console.log(event);
+  }
+
+  public fileLeave(event: any) {
+    console.log(event);
+  }
+  openFilePRSelector(idx: number) {
+    console.log(idx)
+    // Access the file input element and trigger a click event
+    const fileInput = document.getElementById(`fileInput${idx}`) as HTMLInputElement;
+    fileInput.click();
+  }
+
+  @ViewChild('fileInput') fileInput!: ElementRef;
+  selectFile() {
+    // Trigger the file input click event
+    this.fileInput.nativeElement.click();
+  }
+  async saveFPO() {
+    const title = 'การบันทึกข้อมูล';
+    const message = 'คุณต้องการบันทึกข้อมูลใช่หรือไม่?';
+    const result = await this.swal.ConfirmText(title, message);
+    if (!result) {
+      return;
+    }
     this.spinner.show(undefined, {
       type: "ball-triangle-path",
       size: "medium",
@@ -171,7 +268,7 @@ export class DocsModalComponent implements OnInit {
         // Append scalar values directly
         if (control.value !== null && control.value) {
           if (key === "docDate") {
-          //แปลงให้อยู่ในรูปแบบวันที่ ปกติ
+            //แปลงให้อยู่ในรูปแบบวันที่ ปกติ
             const { year, month, day } = this.fpoForm.get("docDate").value as {
               year: number;
               month: number;
@@ -200,15 +297,17 @@ export class DocsModalComponent implements OnInit {
     // formData.set('isMethods', 'true');
     // formData.set('statusId', '2');
 
-  console.log(this.fpoForm.get('pOlist').value);
-            // Now, send the form data to your API
+    console.log(this.fpoForm.get('pOlist').value);
+    // Now, send the form data to your API
     this.service.saveFPO(formData).subscribe(
       (res) => {
         console.log("Form submitted successfully", res);
         this.spinner.hide();
+        this.swal.showDialog('success',"บันทึกข้อมูลเรียบร้อยแล้ว");
       },
       (error) => {
-        console.error("Error submitting form", error);
+        //console.error("Error submitting form", error);
+        this.swal.showDialog('error',error.message);
         this.spinner.hide();
       }
     );

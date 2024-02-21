@@ -12,6 +12,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { DocsListComponent } from './docs-list/docs-list.component';
 import { DmssRouteModule } from './dmss-routing.module';
 import { DocsModalComponent } from './docs-modal/docs-modal.component';
+import { NgxFileDropModule } from 'ngx-file-drop';
+import { FileUploadModule } from 'ng2-file-upload';
 @NgModule({
   declarations: [
     DocsListComponent,
@@ -28,7 +30,9 @@ import { DocsModalComponent } from './docs-modal/docs-modal.component';
     DatePipe,
     NgSelectModule,
     DmssRouteModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    NgxFileDropModule,
+    FileUploadModule
   ]
 })
 export class DmssModule { }
