@@ -1,7 +1,12 @@
 <section id="docs-modal">
-  <div class="row">
-    <div class="col-12">
-      <div class="content-header">จัดการเอกสาร #</div>
+
+  <div class="d-flex justify-content-between">
+    <div>
+      <div class="content-header">จัดการเอกสาร # {{getAction()}}</div>
+    </div>
+    <div class="p-2">
+      <button class="btn btn-outline-secondary" (click)="goBack()"><i class="fa fa-chevron-circle-left">
+          กลับ</i></button>
     </div>
   </div>
   <!-- Basic Form & Hidden Label Layouts starts -->
@@ -44,6 +49,7 @@
                             </span>
                           </ng-template>
                         </div>
+
                       </div>
                     </div>
                   </div>
@@ -54,7 +60,8 @@
                       <label for="basic-form-6">Status</label>
                       <select class="form-control" formControlName="statusId">
                         <option value="0" selected disabled>---ไม่ระบุ---</option>
-                        <option *ngFor="let item of status" [value]="item.statusId">{{ item.statusName }}</option>
+                        <option *ngFor="let item of status" [disabled]="getAction()==='add'" [value]="item.statusId">
+                          {{ item.statusName }}</option>
                       </select>
                     </div>
                   </div>
@@ -62,14 +69,14 @@
                     <div class="form-group mb-2">
                       <label for="basic-form-2">วันที่ของมาถึง</label>
                       <div class="form-inline">
-                        <div class="input-group" style="width: 100%;">
-                          <input class="form-control" formControlName="arrived" readonly (click)="dpEnd.toggle()"
-                            placeholder="dd/mm/yyyy" name="dp" [(ngModel)]="dtEnd" ngbDatepicker
-                            [dayTemplate]="customDay" [markDisabled]="isDisabled" #dpEnd="ngbDatepicker">
+                        <div class="input-group">
+                          <input class="form-control" formControlName="arrived" readonly (click)="dtArrived.toggle()"
+                            placeholder="dd/mm/yyyy" name="dp" ngbDatepicker
+                            [dayTemplate]="customDay" [markDisabled]="isDisabled" #dtArrived="ngbDatepicker">
                           <div class="input-group-append">
-                            <div class="input-group-text" (click)="dpEnd.toggle()">
+                            <button class="btn btn-outline-secondary" type="button" (click)="dtArrived.toggle()">
                               <i class="ft ft-calendar" style="cursor: pointer;"></i>
-                            </div>
+                            </button>
                           </div>
                           <ng-template #customDay let-date="date" let-currentMonth="currentMonth"
                             let-selected="selected" let-disabled="disabled">
@@ -106,9 +113,10 @@
                                 <input type="text" class="form-control" markDisabled="true" formControlName="item">
                               </td>
                               <td>
-  
+
                                 <div class="form-group">
-                                  <input type="text" class="form-control" placeholder="เลขที่ใบสั่งซื้อ (PO) #{{idx+1}}" formControlName="poNo">
+                                  <input type="text" class="form-control" placeholder="เลขที่ใบสั่งซื้อ (PO) #{{idx+1}}"
+                                    formControlName="poNo">
                                 </div>
                                 <ngx-file-drop dropZoneLabel="Drop files here" accept=".pdf"
                                   (onFileDrop)="onSelectFilePOlist($event,idx)" (onFileOver)="fileOver($event)"
@@ -129,26 +137,27 @@
 
                               <td>
                                 <div class="form-group">
-                                  <input type="text" class="form-control" placeholder="เลขที่ใบขอซื้อ (PR) #{{idx+1}}" formControlName="prNo">
+                                  <input type="text" class="form-control" placeholder="เลขที่ใบขอซื้อ (PR) #{{idx+1}}"
+                                    formControlName="prNo">
                                 </div>
                                 <ngx-file-drop dropZoneLabel="Drop files here" accept=".pdf"
-                                (onFileDrop)="onSelectFilePRlist($event,idx)" (onFileOver)="fileOver($event)"
-                                (onFileLeave)="fileLeave($event)">
-                                <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                                  (onFileDrop)="onSelectFilePRlist($event,idx)" (onFileOver)="fileOver($event)"
+                                  (onFileLeave)="fileLeave($event)">
+                                  <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
 
-                                  <label class="text-dark">ลากไฟล์มาที่นี้.. </label>
-                                  <button class="btn btn-outline-info" (click)="openFileSelector()">
-                                    เลือกไฟล์</button>
-                                </ng-template>
-                              </ngx-file-drop>
+                                    <label class="text-dark">ลากไฟล์มาที่นี้.. </label>
+                                    <button class="btn btn-outline-info" (click)="openFileSelector()">
+                                      เลือกไฟล์</button>
+                                  </ng-template>
+                                </ngx-file-drop>
 
-                              <div *ngIf="fpoForm.get('pOlist.' + idx + '.prPath').value">
-                                <label>{{ fpoForm.get('pOlist.' + idx + '.prPath').value?.name }}</label>
-                              </div>
+                                <div *ngIf="fpoForm.get('pOlist.' + idx + '.prPath').value">
+                                  <label>{{ fpoForm.get('pOlist.' + idx + '.prPath').value?.name }}</label>
+                                </div>
                                 <!-- <div ng2FileDrop  [uploader]="uploader" [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"  (fileOver)="fileOverBase($event)"
                                   class="py-5 mb-3 text-center font-medium-5 text-uppercase grey my-drop-zone">
                                   <input type="file" #fileInput formControlName="poPath" style="display: none" >
-                                  <i class="fa fa-file-pdf"> ลากไฟล์มาที่นี้</i> 
+                                  <i class="fa fa-file-pdf"> ลากไฟล์มาที่นี้</i>
                                   <br>
                                    <button class="btn btn-info" (click)="selectFile()"> เลือกไฟล์</button>
                                  </div> -->
@@ -273,89 +282,235 @@
     </div>
   </section>
   <!-- Basic Form & Hidden Label Layouts ends -->
-  <!--   <div class="row">
-    <div class="col-12">
+  <div class="row">
+    <div class="col-md-6 col-12">
       <div class="card">
         <div class="card-header  layout-dark">
           <div class="card-title">Order Acknowleged</div>
         </div>
         <div class="card-content">
           <div class="card-body">
-            <div class="row">
-              <div class="col-md-6 col-12">
-                <div class="form-group row">
-                  <label class="col-md-3 col-form-label" for="horizontal-form-1">OA / OC</label>
-                  <div class="col-md-9">
-                    <input type="file" class="form-control" onchange="console.log(event.target.files)">
+            <form [formGroup]="orderAckForm" enctype="multipart/form-data">
+                <div class="p-2 flex-fill bd-highlight">
+                  <label class="col-form-label" for="horizontal-form-1">OA / OC</label>
+                    <ngx-file-drop dropZoneLabel="Drop files here" accept=".pdf"
+                      (onFileDrop)="onSelectFileOrderAck($event)" (onFileOver)="fileOver($event)"
+                      (onFileLeave)="fileLeave($event)">
+                      <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+
+                        <label class="text-dark">ลากไฟล์มาที่นี้.. </label>
+                        <button class="btn btn-outline-info" (click)="openFileSelector()">
+                          เลือกไฟล์</button>
+                      </ng-template>
+                    </ngx-file-drop>
+                    <div *ngIf="orderAckForm.get('oaocPath').value">
+                      <label>{{ orderAckForm.get('oaocPath').value?.name }}</label>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div class="col-md-6 col-12">
-                <div class="form-group row">
-                  <label class="col-md-3 col-form-label" for="horizontal-form-2">Ship date</label>
-                  <div class="col-md-9">
-                    <input type="text" class="form-control square" id="horizontal-form-2" name="last-name">
+                  <div class="p-2 flex-fill bd-highlight">
+                    <label class="col-form-label" for="horizontal-form-2">Ship date</label>
+                      <div class="form-inline">
+                        <div class="input-group" style="width: 100%;">
+                          <input class="form-control" formControlName="shipDate"  readonly (click)="dpShipDate.toggle()"
+                            placeholder="dd/mm/yyyy" name="dp" ngbDatepicker
+                            [dayTemplate]="customDay" [markDisabled]="isDisabled" #dpShipDate="ngbDatepicker">
+                          <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" (click)="dpShipDate.toggle()">
+                              <i class="ft ft-calendar" style="cursor: pointer;"></i>
+                            </button>
+                          </div>
+                          <ng-template #customDay let-date="date" let-currentMonth="currentMonth"
+                            let-selected="selected" let-disabled="disabled">
+                            <span class="custom-day" [class.weekend]="isWeekend(date)" [class.bg-primary]="selected"
+                              [class.hidden]="date.month !== currentMonth" [class.text-muted]="disabled">
+                              {{ date.day }}
+                            </span>
+                          </ng-template>
+                        </div>
+                      </div>
+
                   </div>
-                </div>
+
+              <div class="row justify-content-center py-1">
+                <button type="submit" class="btn btn-lg btn-primary">บันทึก</button>
               </div>
-            </div>
-            <div class="row justify-content-center">
-              <button type="submit" class="btn btn-lg btn-primary">บันทึก</button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-12">
+    <div class="col-md-6 col-12">
       <div class="card">
         <div class="card-header  layout-dark">
           <div class="card-title">Ready to Shipped</div>
         </div>
         <div class="card-content">
           <div class="card-body">
-            <div class="row">
+            <div class="d-flex mb-3">
+              <div class="p-2 flex-fill bd-highlight">
+                <label class="col-form-label" for="horizontal-form-2">Packing List</label>
+                <ngx-file-drop dropZoneLabel="Drop files here" accept=".pdf"
+                (onFileDrop)="onSelectFileOrderAck($event)" (onFileOver)="fileOver($event)"
+                (onFileLeave)="fileLeave($event)">
+                <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
 
+                  <label class="text-dark">ลากไฟล์มาที่นี้.. </label>
+                  <button class="btn btn-outline-info" (click)="openFileSelector()">
+                    เลือกไฟล์</button>
+                </ng-template>
+              </ngx-file-drop>
+              <div *ngIf="orderAckForm.get('oaocPath').value">
+                <label>{{ orderAckForm.get('oaocPath').value?.name }}</label>
+              </div>
+
+              </div>
+              <div class="p-2 flex-fill bd-highlight">
+                <label class="col-form-label" for="horizontal-form-2">Invoice</label>
+                <ngx-file-drop dropZoneLabel="Drop files here" accept=".pdf"
+                (onFileDrop)="onSelectFileOrderAck($event)" (onFileOver)="fileOver($event)"
+                (onFileLeave)="fileLeave($event)">
+                <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+
+                  <label class="text-dark">ลากไฟล์มาที่นี้.. </label>
+                  <button class="btn btn-outline-info" (click)="openFileSelector()">
+                    เลือกไฟล์</button>
+                </ng-template>
+              </ngx-file-drop>
+              <div *ngIf="orderAckForm.get('oaocPath').value">
+                <label>{{ orderAckForm.get('oaocPath').value?.name }}</label>
+              </div>
+              </div>
             </div>
-            <div class="row justify-content-center">
+            <div class="form-row">
+              <div class="col-md-6 col-12">
+                <label for="basic-form-7">Freight Forwader</label>
+                <div class="form-inline">
+                  <div class="input-group mb-2" style="width: 100%;">
+                    <select id="basic-form-7" name="budget" class="form-control" formControlName="buyerId">
+                      <option value="0" selected disabled>--เลือก Freight Forwader--</option>
+                      <option value="1">Nattida</option>
+                      <option value="2">Chanarong</option>
+                      <option value="3">Sattawat</option>
+                    </select>
+                    <div class="input-group-append">
+                      <button class="btn btn-success" (click)="addUser()"> <i class="ft ft-plus"></i></button>
+                    </div>
+                  </div>
+                </div>
+                <label for="basic-form-7">Quotation Freight</label>
+                <div class="input-group mb-2">
+                  <div class="form-inline">
+                    <input type="text" id="basic-form-3" class="form-control" name="Quotation Freight"
+                      formControlName="quotationFreight">
+                      <div class="ml-2">
+                        <label for="basic-form-7"> บาท</label>
+                      </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="col-md-6 col-12">
+                <label for="basic-form-7">Freight</label>
+                <div class="form-inline">
+                  <div class="input-group mb-2" style="width: 100%;">
+                    <select id="basic-form-7" name="budget" class="form-control" formControlName="supplierId">
+                      <option value="0" selected disabled>--เลือก Freight--</option>
+                      <option value="1">Air</option>
+                      <option value="2">Sea Freight</option>
+                    </select>
+                  </div>
+                </div>
+                <label class="col-form-label" for="horizontal-form-2">แนบไฟล์ Quotation Freight</label>
+                <ngx-file-drop dropZoneLabel="Drop files here" accept=".pdf"
+                (onFileDrop)="onSelectFileOrderAck($event)" (onFileOver)="fileOver($event)"
+                (onFileLeave)="fileLeave($event)">
+                <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+
+                  <label class="text-dark">ลากไฟล์มาที่นี้.. </label>
+                  <button class="btn btn-outline-info" (click)="openFileSelector()">
+                    เลือกไฟล์</button>
+                </ng-template>
+              </ngx-file-drop>
+              <div *ngIf="orderAckForm.get('oaocPath').value">
+                <label>{{ orderAckForm.get('oaocPath').value?.name }}</label>
+              </div>
+
+              </div>
+            </div>
+            <div class="row justify-content-center py-2">
+
               <button type="submit" class="btn btn-lg btn-primary">บันทึก</button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-12">
+    <div class="col-md-6 col-12">
       <div class="card">
+
         <div class="card-header  layout-dark">
           <div class="card-title">On the Way</div>
         </div>
         <div class="card-content">
           <div class="card-body">
-            <div class="row">
-
+            <p><code>** Spare Part ไม่ต้องมีใบขนก็ได้ **</code> </p>
+          </div>
             </div>
             <div class="row justify-content-center">
               <button type="submit" class="btn btn-lg btn-primary">บันทึก</button>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="col-12">
+
+    <div class="col-lg-6 col-12">
       <div class="card">
-        <div class="card-header  layout-dark">
-          <div class="card-title">Received</div>
+        <div class="card-header">
+          <h4 class="card-title">Clearance</h4>
         </div>
         <div class="card-content">
           <div class="card-body">
-            <div class="row">
-
-            </div>
-            <div class="row justify-content-center">
-              <button type="submit" class="btn btn-lg btn-primary">บันทึก</button>
-            </div>
+            <form class="form-bordered">
+              <div class="form-group row">
+                <label class="col-md-3 label-control" for="bordered-form-1">Employee Name</label>
+                <div class="col-md-9">
+                  <div class="position-relative has-icon-left">
+                    <input type="text" id="bordered-form-1" class="form-control" name="employeename">
+                    <div class="form-control-position">
+                      <i class="ft-user"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 label-control" for="bordered-form-2">Project Name</label>
+                <div class="col-md-9">
+                  <div class="position-relative has-icon-left">
+                    <input type="text" id="bordered-form-2" class="form-control" name="projectname">
+                    <div class="form-control-position">
+                      <i class="ft-briefcase"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-md-3 label-control" for="bordered-form-3">Rate Per Hour</label>
+                <div class="col-md-9">
+                  <div class="input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">$</span>
+                    </div>
+                    <input type="text" id="bordered-form-3" class="form-control" aria-label="Amount (to the nearest dollar)" name="rateperhour">
+                    <div class="input-group-append">
+                      <span class="input-group-text">.00</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="btn btn-primary mr-2"><i class="ft-check-square mr-1"></i>Save</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
 </section>

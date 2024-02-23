@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Location } from '@angular/common';
 import {
   FormArray,
   FormBuilder,
@@ -26,7 +27,6 @@ import { FileUploader } from 'ng2-file-upload';
 import { NgxFileDropEntry, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop';
 import swal from 'sweetalert2';
 //import { FPOModel } from "app/models/procurement.model";
-const URL = 'https://evening-anchorage-3159.herokuapp.com/api/';
 @Component({
   selector: "app-docs-modal",
   templateUrl: "./docs-modal.component.html",
@@ -45,46 +45,46 @@ export class DocsModalComponent implements OnInit {
     public toastr: ToastrService,
     private spinner: NgxSpinnerService,
     private modalService: NgbModal,
-    private activateRoute: ActivatedRoute
+    private activateRoute: ActivatedRoute,
+    private location: Location
   ) {
-    //fpo form
   }
   //ตัวแปร
   swal = swalFunctions;
   statusId: string;
   dtStart: NgbDateStruct;
   dtEnd: NgbDateStruct;
+  dtArrived:NgbDateStruct;
+  dtShipDate: NgbDateStruct;
   now: Date = new Date();
   status: any = [];
   users: UserModel[];
   data: any[];
   fpoModel: FPOModel;
-  hasBaseDropZoneOver = false;
-  hasAnotherDropZoneOver = false;
-  fileName: string = '';
+  docNo:string = "";
   public files: NgxFileDropEntry[] = [];
   //FormGroup
   fpoForm: FormGroup;
   recipeForm!: FormGroup;
   form: FormGroup;
+  orderAckForm:FormGroup;
   ngOnInit(): void {
     //this.buildItemForm(this.data);
-    this.initializeFPOForm();
+    this.initFPOForm();
+    this.initOrderAckForm();
     this.selectToday();
     this.now = new Date();
     this.getStatus();
   }
 
-  uploader: FileUploader = new FileUploader({
-    url: URL,
-    isHTML5: true
-  });
-
-  initializeFPOForm() {
+  goBack(): void {
+    this.location.back();
+  }
+  initFPOForm() {
     this.fpoForm = this.fb.group({
       docNo: ['', Validators.required],
       docDate: [''],
-      statusId: [0],
+      statusId: [1],
       arrived: [''],
       buyerId: [0],
       supplierId: [0],
@@ -104,7 +104,18 @@ export class DocsModalComponent implements OnInit {
       ]),
     });
   }
-
+  initOrderAckForm() {
+    this.orderAckForm = this.fb.group({
+      oaocPath: [null],
+      shipDate: ['']
+    });
+  }
+  getAction(){
+    if(this.docNo==='')
+      return "add";
+    else
+      return "edit";
+  }
   getStatus() {
     return (this.status = [
       { statusId: 1, statusName: "Sending PO" },
@@ -118,6 +129,9 @@ export class DocsModalComponent implements OnInit {
   }
   isDisabled(date: NgbDateStruct, current: { month: number }) {
     return date.month !== current.month;
+  }
+  updateDocDate(value: any) {
+    this.fpoForm.get('docDate').setValue(value);
   }
   // Selects today's date
   selectToday() {
@@ -140,26 +154,23 @@ export class DocsModalComponent implements OnInit {
     });
   }
 
-  fileOverBase(e: any): void {
-    this.hasBaseDropZoneOver = e;
-  }
-  fileOverAnother(e: any): void {
-    this.hasAnotherDropZoneOver = e;
-  }
-  onFileSelected(event: any, idx: number): void {
-    const fileInput = event.target;
-    if (fileInput.files && fileInput.files[0]) {
-      const file = fileInput.files[0];
-
-
-      // Assuming you want to update the form control value
-      const poPathControl = (this.fpoForm.get('pOlist') as FormArray).at(idx).get('poPath');
-      poPathControl.setValue(file);
-
-      // If you also want to update the form validity or perform other actions, you can do so here.
+  onSelectFileOrderAck(files: NgxFileDropEntry[]) {
+    this.files = files;
+    for (const droppedFile of files) {
+      // Is it a file?
+      if (droppedFile.fileEntry.isFile) {
+        const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+        fileEntry.file((file: File) => {
+          const control = this.orderAckForm.get('oaocPath') as FormControl;
+          control.setValue(file);
+        });
+      } else {
+        // It was a directory (empty directories are added, otherwise only files)
+        const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
+        console.log(droppedFile.relativePath, fileEntry);
+      }
     }
   }
-
   onSelectFilePOlist(files: NgxFileDropEntry[], idx: number): void {
     this.files = files;
     for (const droppedFile of files) {
@@ -223,6 +234,9 @@ export class DocsModalComponent implements OnInit {
     }
   }
 
+  onChange(event: any) {
+    const file: File = event.target.files[0];
+  }
   public fileOver(event: any) {
     console.log(event);
   }
@@ -237,11 +251,6 @@ export class DocsModalComponent implements OnInit {
     fileInput.click();
   }
 
-  @ViewChild('fileInput') fileInput!: ElementRef;
-  selectFile() {
-    // Trigger the file input click event
-    this.fileInput.nativeElement.click();
-  }
   async saveFPO() {
     const title = 'การบันทึกข้อมูล';
     const message = 'คุณต้องการบันทึกข้อมูลใช่หรือไม่?';
@@ -301,9 +310,9 @@ export class DocsModalComponent implements OnInit {
     // Now, send the form data to your API
     this.service.saveFPO(formData).subscribe(
       (res) => {
-        console.log("Form submitted successfully", res);
+        this.docNo=res.docNo;
         this.spinner.hide();
-        this.swal.showDialog('success',"บันทึกข้อมูลเรียบร้อยแล้ว");
+        this.swal.showDialog('success',`เพิ่มข้อมูล Doc No : [ ${res.docNo}] เรียบร้อยแล้ว `);
       },
       (error) => {
         //console.error("Error submitting form", error);
